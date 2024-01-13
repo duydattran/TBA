@@ -17,6 +17,9 @@ public class EnemyManager {
 	
 	public void update() {
 		for (var enemy : lstEnemy) {
+			if (!game.camera().isEntityInRange(enemy)) {
+				continue;
+			}
 			enemy.update();
 		}
 	}

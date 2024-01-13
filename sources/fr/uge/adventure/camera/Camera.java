@@ -82,6 +82,14 @@ public class Camera {
 			camEndRow = game.tileMap().row();
 	}
 	
+	public boolean isEntityInRange(Entity entity) {
+		if (camX < entity.wrldX() && entity.wrldX() < camX + camWidth &&
+			camY < entity.wrldY() && entity.wrldY() < camY + camHeight) {
+			return true;
+		}
+		return false;
+	}
+	
 	//getters and setters
 	
 	public double camX() {

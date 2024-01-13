@@ -15,7 +15,7 @@ public class EnemyRenderer {
 	private final ArrayList<HashMap<Direction, ArrayList<BufferedImage>>> enemyTextures;
 	private final ArrayList<Enemy> lstEnemy;
 	private final GameRenderer gameRenderer;
-	private final ArrayList<Timer> animTimers;
+	private final ArrayList<Timer> lstAnimTimers;
 	private long animationTime = 100; // milliseconds
 	private int[] animIndexes;
 	
@@ -27,9 +27,9 @@ public class EnemyRenderer {
 		this.gameRenderer = gameRenderer;
 		this.lstEnemy = lstEnemy;
 		this.animIndexes = new int[lstEnemy.size()];
+		this.lstAnimTimers = new ArrayList<Timer>();
 		loadEnemyTexture(gameRenderer.ogSprSize());
-		
-		this.animTimers = new ArrayList<Timer>();
+		initializeTimers();
 	}
 	
 	public void update() {
@@ -40,6 +40,9 @@ public class EnemyRenderer {
 		Objects.requireNonNull(g2);
 		for (int i = 0; i < lstEnemy.size(); i++) {
 			Enemy currentEnemy = lstEnemy.get(i);
+			if (!gameRenderer.cam().isEntityInRange(currentEnemy)) {
+				continue;
+			}
 			int currentIndexAnim = animIndexes[i];
 			var texture = enemyTextures.get(i);
 			BufferedImage currentTexture = texture.get(currentEnemy.direction()).get(currentIndexAnim);
@@ -71,10 +74,16 @@ public class EnemyRenderer {
 		}
 	}
 	
+	private void initializeTimers() {
+		for (int i = 0; i < lstEnemy.size(); i++) {
+			lstAnimTimers.add(new Timer());
+		}
+	}
+	
 	private void animateEnemy() {
 		for (int i = 0; i < lstEnemy.size(); i++) {
 			Enemy currentEnemy = lstEnemy.get(i);
-			Timer currentTimer = animTimers.get(i);
+			Timer currentTimer = lstAnimTimers.get(i);
 			currentTimer.update();
 			
 			if (currentEnemy.xSpd() == 0 && currentEnemy.ySpd() == 0) {

@@ -47,7 +47,7 @@ public class GameRenderer {
 			
 			//draw all the element to the bufferImage off screen
 			clearScreen(bufferGraphics);
-			mapRenderer.render(bufferGraphics);
+//			mapRenderer.render(bufferGraphics);
 			pRenderer.render(bufferGraphics);
 			eRenderer.render(bufferGraphics);
 			//when all the elements are drawn, draw the buffer image
