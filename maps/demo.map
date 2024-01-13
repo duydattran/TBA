@@ -1,0 +1,66 @@
+[grid]
+encodings: WALL(W) GRASS(G) 
+	FENCE(F) CLIFF(C) ALGAE(A) FLOWER(f) ROAD(r)
+size: (68 x 36)
+data: """
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WGGGGGGGGGGGGCCCCGGGGGGGGGGGGWWWWGGGGGGGGGGGGGGGGGGGGGGGGGGGGWWWWWWW
+WGFFFFFFFFFFFCCCCFFFFFFFFFFFGWWWWGFFFFFFFFFFFFFFFFFFFFFFFFF      WWW
+WGFW                       FGWWWWGF                              WWW
+WGF                        FGWWWWGF                              WWW
+WGF        A               FGWWWWGF                              WWW
+WGF            f           FGWWWWGF                              WWW
+WGF        rrrrrrrr        FGWWWWGF                              WWW
+WGF        rWWWWWWr        rrrrrrrr                        FGWWWWWWW
+WGF        rW     r        WWWWWWWW                        FGWWWWWWW
+WGF        rrrrrrrr        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGFFFFFFFFFFFFFFFFFFFFFFFFFFGWWWWGF                        FGWWWWWWW
+WGGGGGGGGGGGGGGGGGGGGGGGGGGGGWWWWGF                        FGWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGF                        FGWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWrWWWWWWWWWWWWWWWWWWWWW
+WGGGGGGGGGGGGGGGGGGGGGGGGGGGGWWWWGGGGGGGGGGGGWrWGGGGGGGGGGGGGWWWWWWW
+WGFFFFFFFFFFFFFFFFFFFFFFFFFFGWWWWGFFFFFFFFFFFWrWFFFFFFFFFFFFGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGF                        FGWWWWGF                        FGWWWWWWW
+WGFFFFFFF            FFFFFFFGWWWWGF                        FGWWWWWWW
+WGGGGGGGGGGGGGGGGGGGGGGGGGGGGWWWWGF                        FGWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGFWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+"""
+
+[element]
+name: John
+player: true
+skin: BADBAD
+position: (45,5)
+health: 10
+
+[element]
+name: Waldo
+skin: BABA
+position: (46, 5)
+kind: enemy
+health: 10
+zone: (1, 1) (5 x 3)
+behavior: agressive
+damage: 10
+
+[element]
+name: Durendale
+skin: SWORD
+position: (3,1)
+kind: item
+damage: 15
