@@ -1,6 +1,7 @@
 package fr.uge.adventure.ulti;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -29,7 +30,20 @@ public class Utilities {
 		BufferedImage scaledImage = new BufferedImage((int) (img.getWidth() * scale), (int) (img.getHeight() * scale), img.getType());
 		Graphics2D g2 = scaledImage.createGraphics();
 		g2.drawImage(img, 0, 0, (int) (img.getWidth() * scale), (int) (img.getHeight() * scale), null);
+		g2.dispose();
 		return scaledImage;
+	}
+	
+	public static BufferedImage rotateImage(BufferedImage img, double angle) {
+		BufferedImage rotatedImage = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+		double rotationAngle = Math.toRadians(angle);
+		Graphics2D g2 = rotatedImage.createGraphics();
+		AffineTransform transform = new AffineTransform();
+		transform.rotate(rotationAngle, img.getWidth() / 2, img.getHeight() / 2);
+		g2.setTransform(transform);
+		g2.drawImage(img, 0, 0, null);
+		g2.dispose();
+		return rotatedImage; 
 	}
 	
 	public static int sign(int number) {

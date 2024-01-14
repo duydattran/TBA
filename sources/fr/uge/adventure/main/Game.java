@@ -10,12 +10,18 @@ import fr.uge.adventure.camera.Camera;
 import fr.uge.adventure.collision.CollisionChecker;
 import fr.uge.adventure.entity.Entity;
 import fr.uge.adventure.entity.Player;
+import fr.uge.adventure.entity.PlayerRenderer;
 import fr.uge.adventure.entity.Enemy;
 import fr.uge.adventure.entity.EnemyManager;
+import fr.uge.adventure.entity.EnemyRenderer;
 import fr.uge.adventure.fileloader.Parser;
 import fr.uge.adventure.gamedata.GameData;
 import fr.uge.adventure.input.InputHandler;
+import fr.uge.adventure.item.Item;
+import fr.uge.adventure.item.ItemManager;
+import fr.uge.adventure.item.ItemRenderer;
 import fr.uge.adventure.renderer.GameRenderer;
+import fr.uge.adventure.tile.MapRenderer;
 import fr.uge.adventure.tile.TileManager;
 import fr.uge.adventure.tile.TileMap;
 import fr.umlv.zen5.ApplicationContext;
@@ -36,17 +42,20 @@ public class Game {
 	private final double scrHeight;
 	private final ApplicationContext context;
 	
-	private final String mapName;
+	private String mapName;
 	private final GameData data;
 	
 	private final Player player;
 	private final TileMap tileMap;
 	private final ArrayList<Enemy> lstEnemy;
+	private final ArrayList<Item> lstItem;
 	
 	private final TileManager tileMng;
 	private final EnemyManager enemyMng;
+	private final ItemManager itemMng;
 	
 	private final Camera cam;
+	
 	private final InputHandler input;
 	private final CollisionChecker coliCheck;
 	
@@ -69,14 +78,16 @@ public class Game {
 		this.player = new Player(this);
 		this.tileMap = new TileMap(data.map());
 		this.lstEnemy = new ArrayList<Enemy>();
+		this.lstItem = new ArrayList<Item>();
 		
 		this.input = new InputHandler();
 		this.coliCheck = new CollisionChecker(this);
+		
 		this.tileMng = new TileManager(this);
 		this.enemyMng = new EnemyManager(this);
+		this.itemMng = new ItemManager(this);
 		
 		this.cam = new Camera(player, scrWidth, scrHeight, this);
-		
 		this.renderer = new GameRenderer(this);
 	}
 	
@@ -94,6 +105,13 @@ public class Game {
 		cam.update();
 		enemyMng.update();
 		tileMng.update();
+		itemMng.update();
+		
+		Item item = coliCheck.checkObject(player);
+		if (item != null) {
+			itemMng.deleteItem(item);
+			
+		}
 		
 		//update animation
 		renderer.update();
@@ -192,5 +210,9 @@ public class Game {
 
 	public ArrayList<Enemy> lstEnemy() {
 		return lstEnemy;
+	}
+
+	public ArrayList<Item> lstItem() {
+		return lstItem;
 	}
 }

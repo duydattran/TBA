@@ -9,16 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.uge.adventure.element.Element;
+import fr.uge.adventure.element.ElementType;
 import fr.uge.adventure.gamedata.ElementData;
 import fr.uge.adventure.gamedata.EnemyData;
 import fr.uge.adventure.gamedata.GameData;
+import fr.uge.adventure.gamedata.ItemData;
 import fr.uge.adventure.gamedata.MapData;
 import fr.uge.adventure.gamedata.PlayerData;
 import fr.uge.adventure.gamedata.Position;
 import fr.uge.adventure.gamedata.Size;
 import fr.uge.adventure.gamedata.Zone;
-import fr.uge.adventure.gameobject.Element;
-import fr.uge.adventure.gameobject.ElementType;
 import fr.uge.adventure.main.Game;
 import fr.uge.adventure.tile.TileType;
 
@@ -30,6 +31,7 @@ public class Parser {
 	private MapData mapData;
 	private PlayerData playerData;
 	private ArrayList<EnemyData> lstEnemyData;
+	private ArrayList<ItemData> lstItemData;
 
 	public Parser(String mapName, Game game) throws IOException {
 		var path = Path.of("maps", mapName + ".map");
@@ -38,6 +40,7 @@ public class Parser {
 		this.lineno = 1;
 		this.game = game;
 		this.lstEnemyData = new ArrayList<EnemyData>();
+		this.lstItemData = new ArrayList<ItemData>();
 	}
 
 	private Result next(ArrayList<Result> tokens) {
@@ -94,7 +97,7 @@ public class Parser {
 			parseSection(tokens);
 		}
 		
-		return new GameData(mapData, playerData, lstEnemyData);
+		return new GameData(mapData, playerData, lstEnemyData, lstItemData);
 	}
 
 	private void parseSection(ArrayList<Result> tokens) {
@@ -136,6 +139,9 @@ public class Parser {
 				break;
 			case Enemy:
 				lstEnemyData.add((EnemyData) eleData);
+				break;
+			case Item:
+				lstItemData.add((ItemData) eleData);
 				break;
 			default:
 				break;
@@ -385,6 +391,7 @@ public class Parser {
 			case "skin":
 			case "behavior":
 			case "kind":
+			case "color":
 				stringData.put(pointerToken.content(), parseAttributeString(pointerToken.content(), tokens));
 				break;
 
@@ -610,8 +617,14 @@ public class Parser {
 		if (player != null && player.equals("true")) {
 			return new PlayerData(name, skin, position, health);
 		}
-		else if (kind != null && kind.equals("enemy")) {
-			return new EnemyData(name, skin, position, zone, damage, behavior);
+		else if (kind != null) {
+			switch(kind) {
+			case "enemy":
+				return new EnemyData(name, skin, position, zone, damage, behavior);
+			case "item":
+				return new ItemData(name, skin, position, stringData, intData);
+			}
+			
 		}
 
 		return null;

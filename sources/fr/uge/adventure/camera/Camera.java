@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.util.Objects;
 
 import fr.uge.adventure.entity.Entity;
+import fr.uge.adventure.item.Item;
 import fr.uge.adventure.main.Game;
 
 public class Camera {
@@ -85,6 +86,14 @@ public class Camera {
 	public boolean isEntityInRange(Entity entity) {
 		if (camX < entity.wrldX() && entity.wrldX() < camX + camWidth &&
 			camY < entity.wrldY() && entity.wrldY() < camY + camHeight) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isItemInRange(Item item) {
+		if (camX < item.wrldX() && item.wrldX() < camX + camWidth &&
+			camY < item.wrldY() && item.wrldY() < camY + camHeight) {
 			return true;
 		}
 		return false;

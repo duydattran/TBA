@@ -4,9 +4,10 @@ import java.awt.Rectangle;
 import java.util.Objects;
 import java.util.Random;
 
+import fr.uge.adventure.collision.HitBox;
+import fr.uge.adventure.element.Element;
+import fr.uge.adventure.element.ElementType;
 import fr.uge.adventure.gamedata.EnemyData;
-import fr.uge.adventure.gameobject.Element;
-import fr.uge.adventure.gameobject.ElementType;
 import fr.uge.adventure.main.Game;
 import fr.uge.adventure.ulti.Direction;
 
@@ -126,7 +127,7 @@ public class Enemy implements Element, Entity{
 
 	@Override
 	public ElementType type() {
-		return ElementType.Player;
+		return ElementType.Entity;
 	}
 
 	@Override
@@ -181,5 +182,11 @@ public class Enemy implements Element, Entity{
 
 	public String name() {
 		return name;
+	}
+
+	@Override
+	public HitBox hitBoxTest() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

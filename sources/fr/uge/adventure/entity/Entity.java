@@ -2,6 +2,7 @@ package fr.uge.adventure.entity;
 
 import java.awt.Rectangle;
 
+import fr.uge.adventure.collision.HitBox;
 import fr.uge.adventure.ulti.Direction;
 
 public interface Entity {
@@ -19,4 +20,5 @@ public interface Entity {
 	boolean collision();
 	Direction direction();
 	Rectangle hitBox();
+	HitBox hitBoxTest();
 }

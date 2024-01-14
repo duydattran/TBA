@@ -1,4 +1,4 @@
-package fr.uge.adventure.gameobject;
+package fr.uge.adventure.element;
 
 public interface Element {
 	ElementType type();

@@ -2,7 +2,7 @@ package fr.uge.adventure.gamedata;
 
 import java.util.Objects;
 
-import fr.uge.adventure.gameobject.ElementType;
+import fr.uge.adventure.element.ElementType;
 
 public record PlayerData(String name, String skin, Position pos, double health) implements ElementData{
 	public PlayerData {
@@ -12,7 +12,7 @@ public record PlayerData(String name, String skin, Position pos, double health) 
 	}
 
 	@Override
-	public ElementType type() {
-		return ElementType.Player;
+	public DataType type() {
+		return DataType.Player;
 	}
 }

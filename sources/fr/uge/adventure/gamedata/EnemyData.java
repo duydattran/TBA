@@ -2,8 +2,8 @@ package fr.uge.adventure.gamedata;
 
 import java.util.Objects;
 
+import fr.uge.adventure.element.ElementType;
 import fr.uge.adventure.entity.NpcBehavior;
-import fr.uge.adventure.gameobject.ElementType;
 
 public record EnemyData(String name, String skin, Position pos, Zone zone, double health, String behavior) implements ElementData{
 	public EnemyData {
@@ -15,7 +15,7 @@ public record EnemyData(String name, String skin, Position pos, Zone zone, doubl
 	}
 
 	@Override
-	public ElementType type() {
-		return ElementType.Enemy;
+	public DataType type() {
+		return DataType.Enemy;
 	}
 }
