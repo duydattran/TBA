@@ -92,4 +92,8 @@ public class ItemRenderer {
 			}
 		}
 	}
+	
+	public void deleteTexture(Item item) {
+		lstItemTextures.remove(lstItem.indexOf(item));
+	}
 }

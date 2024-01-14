@@ -75,6 +75,10 @@ public class GameRenderer {
 		graphics.fill(rec);
 	}
 	
+	public ItemRenderer iRenderer() {
+		return this.iRenderer;
+	}
+	
 	public Camera cam() {
 		return this.cam;
 	}

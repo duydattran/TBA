@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import fr.uge.adventure.camera.Camera;
-import fr.uge.adventure.gamedata.MapData;
-import fr.uge.adventure.main.Game;
 import fr.uge.adventure.renderer.GameRenderer;
 import fr.uge.adventure.ulti.Utilities;
 

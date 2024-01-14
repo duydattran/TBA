@@ -109,8 +109,8 @@ public class Game {
 		
 		Item item = coliCheck.checkObject(player);
 		if (item != null) {
+			renderer.iRenderer().deleteTexture(item);
 			itemMng.deleteItem(item);
-			
 		}
 		
 		//update animation
