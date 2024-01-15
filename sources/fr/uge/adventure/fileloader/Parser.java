@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import fr.uge.adventure.element.Element;
 import fr.uge.adventure.element.ElementType;
 import fr.uge.adventure.gamedata.ElementData;
@@ -23,6 +25,7 @@ import fr.uge.adventure.gamedata.Size;
 import fr.uge.adventure.gamedata.Zone;
 import fr.uge.adventure.main.Game;
 import fr.uge.adventure.tile.TileType;
+import fr.uge.adventure.ulti.Utilities;
 
 public class Parser {
 	private final Game game;

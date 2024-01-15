@@ -30,7 +30,7 @@ public class GameRenderer {
 	private BufferedImage bufferImage;
 	private Graphics2D bufferGraphics;
 	
-	public GameRenderer(Game game) {
+	public GameRenderer(Game game) throws IOException {
 		this.game = game;
 		this.scale = scaleCalc();
 		this.tileSize = ogSprSize * scale;

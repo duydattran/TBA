@@ -66,7 +66,7 @@ public class Game {
 	private long currentTime;
 	private long timerFps = 0;
 	
-	public Game(ApplicationContext context, String mapName) {		
+	public Game(ApplicationContext context, String mapName) throws IOException {		
 		this.context = context;
 		this.scrHeight = context.getScreenInfo().getHeight();
 		this.scrWidth = context.getScreenInfo().getWidth();
