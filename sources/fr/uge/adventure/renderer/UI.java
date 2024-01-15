@@ -36,6 +36,52 @@ public class UI {
 		g2.drawString("hello dit me may", 100, 100);
 	}
 	
+	public void equipment(Graphics2D g2) {
+		double offSetX = 120;
+		double offSetY = 900;
+		double width = 100;
+		double height = 120;
+		
+		g2.setColor(new Color(200, 195, 148, 200));
+		g2.fillRoundRect((int)offSetX, (int)offSetY, (int)width, (int)height, 20, 20);
+		
+		if (game.player().item() != null) {
+			BufferedImage texture = null;
+			g2.setFont(font.deriveFont(16f));
+			g2.setColor(Color.white);
+			texture = gameRenderer.texture().lstItemTextureUI().get(game.player().item().skin()).get(0);
+			if (texture != null) {
+				g2.drawImage(texture, null, (int)(offSetX + 5), (int)(offSetY + 15));
+				g2.drawString(game.player().item().name(), (int)(offSetX + width / 2 - 4 * game.player().item().name().length()), 
+														   (int)(offSetY + height / 2 + 50)
+														   );
+			}
+		}
+	}
+	
+	public void weapon(Graphics2D g2) {
+		double offSetX = 120;
+		double offSetY = 760;
+		double width = 100;
+		double height = 120;
+		
+		g2.setColor(new Color(200, 195, 148, 200));
+		g2.fillRoundRect((int)offSetX, (int)offSetY, (int)width, (int)height, 20, 20);
+		
+		if (game.player().weapon() != null) {
+			BufferedImage texture = null;
+			g2.setFont(font.deriveFont(16f));
+			g2.setColor(Color.white);
+			texture = gameRenderer.texture().lstItemTextureUI().get(game.player().weapon().skin()).get(0);
+			if (texture != null) {
+				g2.drawImage(texture, null, (int)(offSetX + 5), (int)(offSetY + 15));
+				g2.drawString(game.player().weapon().name(), (int)(offSetX + width / 2 - 4 * game.player().weapon().name().length()), 
+														   (int)(offSetY + height / 2 + 50)
+														   );
+			}
+		}
+	}
+	
 	public void inventoryGrid(Graphics2D g2) {
 		double offSetX = 400;
 		double offSetY = 100;

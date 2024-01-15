@@ -113,6 +113,7 @@ public class Player implements Element, Entity{
 			if (item != null && item.itemType() == ItemType.key &&
 				item.name().equals(door.nameOpen())) {
 				game.lstObject().remove(object);
+				this.item = null;
 				inventory.remove(item);
 			}
 			break;

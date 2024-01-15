@@ -73,6 +73,8 @@ public class GameRenderer {
 				ui.inventoryGrid(bufferGraphics);
 			ui.healthBar(bufferGraphics);
 			ui.message(bufferGraphics);
+			ui.equipment(bufferGraphics);
+			ui.weapon(bufferGraphics);
 			
 			//when all the elements are drawn, draw the buffer image
 			graphics.drawImage(bufferImage, null, 0, 0);

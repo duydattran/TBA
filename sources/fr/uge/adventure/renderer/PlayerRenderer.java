@@ -40,13 +40,16 @@ public class PlayerRenderer {
 	}
 	
 	public void render(Graphics2D g2) {
+		
 		Objects.requireNonNull(g2);
 		Camera cam = gameRenderer.cam();
+		
 		g2.drawImage(pTexture.get(player.direction()).get(animIndex), null, (int) (player.wrldX() - cam.camX()), 
-																			(int) (player.wrldY() - cam.camY()));
+				(int) (player.wrldY() - cam.camY()));				
+		
 		if (weaponTexture.size() != 0)
-			g2.drawImage(weaponTexture.get(0), null, (int) (player.wrldX() - cam.camX() + 50), 
-				(int) (player.wrldY() - cam.camY()));															
+			g2.drawImage(weaponTexture.get(0), null, (int) (player.wrldX() - cam.camX() + 20), 
+													(int) (player.wrldY() - cam.camY()) - 10);											
 	}
 	
 	public void renderWeapon() {

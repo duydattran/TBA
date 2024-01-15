@@ -31,6 +31,12 @@ public class Door implements Element, GameObject{
 		this.nameOpen = strData[1];
 	}
 	
+	@Override
+	public void event() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public String openWith() {
 		return OpenWith;
 	}

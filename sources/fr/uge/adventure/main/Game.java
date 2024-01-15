@@ -118,6 +118,7 @@ public class Game {
 		enemyMng.update();
 		tileMng.update();
 		itemMng.update();
+		objMng.update();
 		
 		Item item;
 		if ((item = player.pickUpItem())!= null) {

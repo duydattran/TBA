@@ -12,4 +12,5 @@ public interface GameObject {
 	HitBox hitBox();
 	String openWith();
 	boolean isCollidable();
+	void event();
 }
