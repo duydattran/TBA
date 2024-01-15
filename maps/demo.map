@@ -56,6 +56,13 @@ kind: item
 position: (46, 5)
 
 [element]
+name: red
+skin: KEY
+color: red
+kind: item
+position: (44, 5)
+
+[element]
 name: Durendale
 skin: SWORD
 position: (47,5)

@@ -72,6 +72,7 @@ public class GameRenderer {
 			if (game.input().inventory)
 				ui.inventoryGrid(bufferGraphics);
 			ui.healthBar(bufferGraphics);
+			ui.message(bufferGraphics);
 			
 			//when all the elements are drawn, draw the buffer image
 			graphics.drawImage(bufferImage, null, 0, 0);

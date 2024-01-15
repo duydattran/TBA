@@ -1,5 +1,7 @@
 package fr.uge.adventure.ulti;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -44,6 +46,25 @@ public class Utilities {
 		g2.drawImage(img, 0, 0, null);
 		g2.dispose();
 		return rotatedImage; 
+	}
+	
+	public static Font loadFont(String path, String name) {
+		Font customFont = null;
+		try (var input = Utilities.class.getResourceAsStream(path + name)) {
+			if (input != null)
+				try {
+					customFont = Font.createFont(Font.TRUETYPE_FONT, input);
+				} catch (FontFormatException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+		catch (IOException e) {
+			System.out.println("file not exist: " + name);
+			e.printStackTrace();
+		}
+		return customFont;
 	}
 	
 	public static int sign(int number) {

@@ -1,11 +1,11 @@
 package fr.uge.adventure.renderer;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 
 import fr.uge.adventure.main.Game;
@@ -16,16 +16,24 @@ public class UI {
 	private final Game game; 
 	private final GameRenderer gameRenderer;
 	private static int cellSize = 160;
+	private final Font font;
 	
 	public UI(Game game, GameRenderer gameRenderer) {
 		Objects.requireNonNull(game);
 		
 		this.game = game;
 		this.gameRenderer = gameRenderer;
+		this.font = Utilities.loadFont("/fr/font/", "font.ttf");
 	}
 	
 	public void update() {
 		
+	}
+	
+	public void message(Graphics2D g2) {
+		g2.setFont(font.deriveFont(24f));
+		g2.setColor(Color.white);
+		g2.drawString("hello dit me may", 100, 100);
 	}
 	
 	public void inventoryGrid(Graphics2D g2) {
@@ -68,12 +76,16 @@ public class UI {
 				int index = cols * row + col;
 				BufferedImage texture = null;
 				Item item = null;
+				g2.setFont(font.deriveFont(16f));
+				g2.setColor(Color.white);
 				if (index < game.player().inventory().size())
 					item = game.player().inventory().get(index);
 				if (item != null)
 					texture = gameRenderer.texture().lstItemTextureUI().get(item.skin()).get(0);
-				if (texture != null)
+				if (texture != null) {
 					g2.drawImage(texture, null, x + cellSize / 4, y + cellSize / 4);
+					g2.drawString(item.name(), x + cellSize / 2 - 4 * item.name().length(), y + cellSize - 10);
+				}
 			}
 		}
 	}
