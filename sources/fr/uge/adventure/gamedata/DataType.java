@@ -4,4 +4,5 @@ public enum DataType {
 	Player,
 	Enemy,
 	Item,
+	Object,
 }

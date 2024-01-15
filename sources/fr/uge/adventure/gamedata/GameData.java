@@ -8,9 +8,10 @@ public class GameData {
 	private final PlayerData playerData;
 	private final ArrayList<EnemyData> lstEnemyData;
 	private final ArrayList<ItemData> lstItemData;
+	private final ArrayList<ObjectData> lstObjData;
 	
 	public GameData(MapData mapData, PlayerData playerData, ArrayList<EnemyData> lstEnemyData,
-					ArrayList<ItemData> lstItemData) {
+					ArrayList<ItemData> lstItemData, ArrayList<ObjectData> lstObjData) {
 		Objects.requireNonNull(mapData);
 		Objects.requireNonNull(playerData);
 		Objects.requireNonNull(lstEnemyData);
@@ -20,6 +21,7 @@ public class GameData {
 		this.playerData = playerData;
 		this.lstEnemyData = lstEnemyData;
 		this.lstItemData = lstItemData;
+		this.lstObjData = lstObjData;
 	}
 	
 	public MapData map() {
@@ -36,5 +38,9 @@ public class GameData {
 	
 	public ArrayList<ItemData> lstItemData() {
 		return lstItemData;
+	}
+
+	public ArrayList<ObjectData> lstObjData() {
+		return lstObjData;
 	}
 }

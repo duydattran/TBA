@@ -6,9 +6,9 @@ data: """
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WGGGGGGGGGGGGCCCCGGGGGGGGGGGGWWWWGGGGGGGGGGGGGGGGGGGGGGGGGGGGWWWWWWW
 WGFFFFFFFFFFFCCCCFFFFFFFFFFFGWWWWGFFFFFFFFFFFFFFFFFFFFFFFFF      WWW
-WGFW                       FGWWWWGF                              WWW
-WGF                        FGWWWWGF                              WWW
-WGF        A               FGWWWWGF                              WWW
+WGFW                       FGWWWWGF                WWW           WWW
+WGF                        FGWWWWGF                W W           WWW
+WGF        A               FGWWWWGF                W W           WWW
 WGF            f           FGWWWWGF                              WWW
 WGF        rrrrrrrr        FGWWWWGF                              WWW
 WGF        rWWWWWWr        rrrrrrrr                        FGWWWWWWW
@@ -49,7 +49,7 @@ position: (45,5)
 health: 10
 
 [element]
-name: Key
+name: blue
 skin: KEY
 color: red
 kind: item
@@ -71,8 +71,9 @@ kind: item
 [element]
 name: door
 skin: DOOR
-position: (49,5)
-kind: item
+locked: KEY red
+position: (52,5)
+kind: obstacle
 
 [element]
 name: Waldo

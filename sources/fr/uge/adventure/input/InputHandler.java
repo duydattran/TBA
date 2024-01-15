@@ -59,10 +59,6 @@ public class InputHandler {
 		case I:
 			inventory = inventory == true ? false : true;
 			break;
-		case SPACE:
-			if (inventory)
-				chooseInventory = true;
-			break;
 		default:
 			break;
 		}
@@ -88,6 +84,7 @@ public class InputHandler {
 			break;
 		case SPACE:
 			chooseInventory = false;	
+			keyHold = false;
 			break;
 		case Z:
 			keyHold = false;
@@ -127,6 +124,12 @@ public class InputHandler {
 			if (keyHold == false) {
 				keyHold = true;
 				debug = true;
+			}
+			break;
+		case SPACE:
+			if (keyHold == false) {
+				keyHold = true;
+				chooseInventory = true;
 			}
 			break;
 		default:

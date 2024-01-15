@@ -1,34 +1,26 @@
 package fr.uge.adventure.main;
 
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import fr.uge.adventure.camera.Camera;
 import fr.uge.adventure.collision.CollisionChecker;
-import fr.uge.adventure.entity.Entity;
 import fr.uge.adventure.entity.Player;
 import fr.uge.adventure.entity.Enemy;
 import fr.uge.adventure.entity.EnemyManager;
 import fr.uge.adventure.fileloader.Parser;
 import fr.uge.adventure.gamedata.GameData;
 import fr.uge.adventure.input.InputHandler;
-import fr.uge.adventure.object.Item;
+import fr.uge.adventure.item.Item;
+import fr.uge.adventure.item.ItemManager;
+import fr.uge.adventure.object.GameObject;
 import fr.uge.adventure.object.ObjectManager;
-import fr.uge.adventure.renderer.EnemyRenderer;
 import fr.uge.adventure.renderer.GameRenderer;
-import fr.uge.adventure.renderer.ItemRenderer;
-import fr.uge.adventure.renderer.MapRenderer;
-import fr.uge.adventure.renderer.PlayerRenderer;
-import fr.uge.adventure.renderer.Texture;
 import fr.uge.adventure.tile.TileManager;
 import fr.uge.adventure.tile.TileMap;
 import fr.uge.adventure.ui.UIManager;
 import fr.umlv.zen5.ApplicationContext;
 import fr.umlv.zen5.Event;
-import fr.umlv.zen5.ScreenInfo;
 
 public class Game {	
 	private static double ogSprSize = 25;
@@ -51,10 +43,12 @@ public class Game {
 	private final TileMap tileMap;
 	private final ArrayList<Enemy> lstEnemy;
 	private final ArrayList<Item> lstItem;
+	private final ArrayList<GameObject> lstObject;
 	
 	private final TileManager tileMng;
 	private final EnemyManager enemyMng;
-	private final ObjectManager itemMng;
+	private final ItemManager itemMng;
+	private final ObjectManager objMng;
 	
 	private final Camera cam;
 	
@@ -72,7 +66,7 @@ public class Game {
 	private long currentTime;
 	private long timerFps = 0;
 	
-	public Game(ApplicationContext context, String mapName) throws IOException {
+	public Game(ApplicationContext context, String mapName) {		
 		this.context = context;
 		this.scrHeight = context.getScreenInfo().getHeight();
 		this.scrWidth = context.getScreenInfo().getWidth();
@@ -84,6 +78,7 @@ public class Game {
 		this.tileMap = new TileMap(data.map());
 		this.lstEnemy = new ArrayList<Enemy>();
 		this.lstItem = new ArrayList<Item>();
+		this.lstObject = new ArrayList<GameObject>();
 		
 		this.input = new InputHandler();
 		this.coliCheck = new CollisionChecker(this);
@@ -91,13 +86,14 @@ public class Game {
 		
 		this.tileMng = new TileManager(this);
 		this.enemyMng = new EnemyManager(this);
-		this.itemMng = new ObjectManager(this);
+		this.itemMng = new ItemManager(this);
+		this.objMng = new ObjectManager(this);
 		
 		this.cam = new Camera(player, scrWidth, scrHeight, this);
 		this.renderer = new GameRenderer(this);
 	}
 	
-	public void update() {
+	public void update() {	
 		//check input		
 		Event event = context.pollOrWaitEvent(1000 / fps);
 		input.eventType(event);
@@ -239,5 +235,9 @@ public class Game {
 
 	public ArrayList<Item> lstItem() {
 		return lstItem;
+	}
+
+	public ArrayList<GameObject> lstObject() {
+		return lstObject;
 	}
 }

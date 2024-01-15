@@ -1,4 +1,4 @@
-package fr.uge.adventure.object;
+package fr.uge.adventure.item;
 
 import java.awt.Rectangle;
 

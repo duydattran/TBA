@@ -36,6 +36,7 @@ public class Texture {
 		this.scale = scale;
 		loadItemTexture();
 		loadEnemyTexture();
+		loadObjectTexture();
 		loadUiTexture("love", heartUiScale);
 	}
 	
@@ -64,6 +65,34 @@ public class Texture {
 			lstItemTexture.put(item.skin(), textureList);
 			lstItemTextureScaled.put(item.skin(), textureListScaled);
 			lstItemTextureUI.put(item.skin(), textureListScaledUi);
+		}
+	}
+	
+	private void loadObjectTexture() {
+		BufferedImage sprite = null;
+		for (var object : game.lstObject()) {
+			
+			String pngName = object.skin().toLowerCase() + ".png";
+			System.out.println(pngName);
+			sprite = Utilities.loadImage("/fr/images/object/", pngName);
+			var textureList = new ArrayList<BufferedImage>();
+			var textureListScaled = new ArrayList<BufferedImage>();
+			var textureListScaledUi = new ArrayList<BufferedImage>();
+
+			for (int row = 0; row < 3; row++) {
+				for (int col = 0; col < 1; col++) {
+					BufferedImage sprFrm = Utilities.getSpriteFrame(sprite, ogSprSize, col, row); //sprite frame
+					BufferedImage sclFrm = Utilities.scaleImage(sprFrm, scale); //scaled frame
+					BufferedImage sclFrmUi = Utilities.scaleImage(sprFrm, cellSize / (2 * ogSprSize)); //scaled frame
+					textureList.add(sprFrm);
+					textureListScaled.add(sclFrm);
+					textureListScaledUi.add(sclFrmUi);
+				}
+			}
+			
+			lstItemTexture.put(object.skin(), textureList);
+			lstItemTextureScaled.put(object.skin(), textureListScaled);
+			lstItemTextureUI.put(object.skin(), textureListScaledUi);
 		}
 	}
 	

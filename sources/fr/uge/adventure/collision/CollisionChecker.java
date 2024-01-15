@@ -1,8 +1,9 @@
 package fr.uge.adventure.collision;
 
 import fr.uge.adventure.entity.Entity;
+import fr.uge.adventure.item.Item;
 import fr.uge.adventure.main.Game;
-import fr.uge.adventure.object.Item;
+import fr.uge.adventure.object.GameObject;
 import fr.uge.adventure.tile.Tile;
 
 public class CollisionChecker {
@@ -50,12 +51,27 @@ public class CollisionChecker {
 		}
 	}
 	
-	public Item checkObject(Entity entity) {
+	public Item checkItem(Entity entity) {
 		for (var item : game.lstItem()) {
 			if (item.hitBox() == null)
 				continue;
 			if (entity.hitBox().intersectInDistance(item.hitBox(), entity.xSpd(), entity.ySpd()))
 				return item;
+		}
+		return null;
+	}
+	
+	public GameObject checkObject(Entity entity) {
+		for (var obj : game.lstObject()) {
+			if (obj.hitBox() == null)
+				continue;
+			if (entity.hitBox().intersectInDistance(obj.hitBox(), entity.xSpd(), entity.ySpd())) {
+				if (obj.isCollidable()) {
+					entity.setXSpd(0);
+					entity.setYSpd(0);
+				}
+				return obj;
+			}
 		}
 		return null;
 	}

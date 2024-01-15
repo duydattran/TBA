@@ -1,6 +1,7 @@
 package fr.uge.adventure.renderer;
 
 import java.awt.Color;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -22,13 +23,14 @@ public class GameRenderer {
 	private final PlayerRenderer pRenderer;
 	private final EnemyRenderer eRenderer;
 	private final ItemRenderer iRenderer; 
+	private final ObjectRenderer oRenderer; 
 	private final UI ui;
 	
 	private final Camera cam;
 	private BufferedImage bufferImage;
 	private Graphics2D bufferGraphics;
 	
-	public GameRenderer(Game game) throws IOException {
+	public GameRenderer(Game game) {
 		this.game = game;
 		this.scale = scaleCalc();
 		this.tileSize = ogSprSize * scale;
@@ -41,6 +43,7 @@ public class GameRenderer {
 		this.pRenderer = new PlayerRenderer(game.player(), this);
 		this.eRenderer = new EnemyRenderer(game.lstEnemy(), this);
 		this.iRenderer = new ItemRenderer(game.lstItem(), this);
+		this.oRenderer = new ObjectRenderer(game.lstObject(), this);
 		this.ui = new UI(game, this);
 		this.cam = game.camera();
 	}
@@ -49,6 +52,7 @@ public class GameRenderer {
 		pRenderer.update();
 		eRenderer.update();
 		iRenderer.update();
+		oRenderer.update();
 		ui.update();
 	}
 	
@@ -61,6 +65,7 @@ public class GameRenderer {
 			iRenderer.render(bufferGraphics);
 			pRenderer.render(bufferGraphics);
 			eRenderer.render(bufferGraphics);
+			oRenderer.render(bufferGraphics);
 //			game.player().hitBox().draw(bufferGraphics, cam.camX(), cam.camY());
 			
 			//UI

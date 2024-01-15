@@ -6,8 +6,8 @@ import java.awt.Rectangle;
 import java.util.Objects;
 
 import fr.uge.adventure.entity.Entity;
+import fr.uge.adventure.item.Item;
 import fr.uge.adventure.main.Game;
-import fr.uge.adventure.object.Item;
 
 public class Camera {
 	private Entity target; //the target on which the camera will look at

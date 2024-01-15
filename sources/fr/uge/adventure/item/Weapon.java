@@ -1,4 +1,4 @@
-package fr.uge.adventure.object;
+package fr.uge.adventure.item;
 
 import java.awt.Rectangle;
 
@@ -8,20 +8,19 @@ import fr.uge.adventure.element.ElementType;
 import fr.uge.adventure.gamedata.ItemData;
 import fr.uge.adventure.main.Game;
 
-public class Key implements Element, Item{
+public class Weapon implements Element, Item{
 	private final String name;
 	private final String skin;
-	private final String color;
+	private final double damage;
 	
 	private double wrldX;
 	private double wrldY;
 	private final HitBox hitBox;
 	
-	public Key(ItemData data, Game game) {
+	public Weapon(ItemData data, Game game) {
 		this.name = data.name();
 		this.skin = data.skin();
-	
-		this.color = data.strData().getOrDefault("color", "null");
+		this.damage = data.intData().get("damage");
 		
 		this.wrldX = (double) (data.pos().x() * game.tileSize());
 		this.wrldY = (double) (data.pos().y() * game.tileSize());
@@ -31,7 +30,7 @@ public class Key implements Element, Item{
 
 	@Override
 	public ItemType itemType() {
-		return ItemType.key;
+		return ItemType.weapon;
 	}
 
 	@Override

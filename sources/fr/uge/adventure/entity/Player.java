@@ -5,10 +5,12 @@ import java.util.Objects;
 import fr.uge.adventure.collision.HitBox;
 import fr.uge.adventure.element.Element;
 import fr.uge.adventure.element.ElementType;
+import fr.uge.adventure.item.Item;
+import fr.uge.adventure.item.ItemType;
+import fr.uge.adventure.item.Weapon;
 import fr.uge.adventure.main.Game;
-import fr.uge.adventure.object.Item;
-import fr.uge.adventure.object.ItemType;
-import fr.uge.adventure.object.Weapon;
+import fr.uge.adventure.object.Door;
+import fr.uge.adventure.object.GameObject;
 import fr.uge.adventure.ulti.Direction;
 
 public class Player implements Element, Entity{
@@ -25,7 +27,10 @@ public class Player implements Element, Entity{
 	private final Game game;
 	private final HitBox hitBox;
 	
+	private final double interactRange = 50;
+	
 	private Weapon weapon = null;
+	private Item item = null;
 	
 	private final ArrayList<Item> inventory;
 	
@@ -50,6 +55,10 @@ public class Player implements Element, Entity{
 	public void update() {
 		move();
 		hitBox.update(wrldX, wrldY);
+		game.coliCheck().checkTile(this);
+		interact();
+		wrldX += xSpd;
+		wrldY += ySpd;
 	}
 	
 	private void move() {
@@ -84,26 +93,39 @@ public class Player implements Element, Entity{
 			xSpd = normalizedX * speed();
 			ySpd = normalizedY * speed();
 		}
-		
-		game.coliCheck().checkTile(this);
-		
-		wrldX += xSpd;
-		wrldY += ySpd;
 	}
 	
 	public Item pickUpItem() {
-		Item item = game.coliCheck().checkObject(this);
+		Item item = game.coliCheck().checkItem(this);
 		if (item != null) {
 			inventory.add(item);
 		}
 		return item;
 	}
 	
+	public void interact() {
+		GameObject object = game.coliCheck().checkObject(this);
+		if (object == null)
+			return;
+		switch(object.objType()) {
+		case door:
+			Door door = (Door) object;
+			if (item != null && item.itemType() == ItemType.key &&
+				item.name().equals(door.nameOpen())) {
+				game.lstObject().remove(object);
+				inventory.remove(item);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	
 	public void useItem() {
 		int index;
 		if (!game.input().chooseInventory)
 			return;
-		
+		game.input().chooseInventory = false;
 		index = game.uiMng().y() * 3 + game.uiMng().x();
 		if (index >= inventory.size())
 			return;
@@ -120,6 +142,12 @@ public class Player implements Element, Entity{
 		case food:
 			inventory.remove(item);
 			health += 1;
+			break;
+		case key:
+			if (this.item != item)
+				this.setItem(item);
+			else 
+				this.setItem(null);
 			break;
 		default:
 			break;
@@ -226,5 +254,13 @@ public class Player implements Element, Entity{
 
 	public void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
+	}
+
+	public Item item() {
+		return item;
+	}
+
+	public void setItem(Item item) {
+		this.item = item;
 	}
 }

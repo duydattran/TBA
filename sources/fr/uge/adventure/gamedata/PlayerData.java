@@ -2,8 +2,6 @@ package fr.uge.adventure.gamedata;
 
 import java.util.Objects;
 
-import fr.uge.adventure.element.ElementType;
-
 public record PlayerData(String name, String skin, Position pos, double health) implements ElementData{
 	public PlayerData {
 		Objects.requireNonNull(name);

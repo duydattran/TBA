@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import fr.uge.adventure.main.Game;
-import fr.uge.adventure.object.Item;
+import fr.uge.adventure.item.Item;
 import fr.uge.adventure.ulti.Utilities;
 
 public class UI {

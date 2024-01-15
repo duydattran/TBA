@@ -16,6 +16,7 @@ import fr.uge.adventure.gamedata.EnemyData;
 import fr.uge.adventure.gamedata.GameData;
 import fr.uge.adventure.gamedata.ItemData;
 import fr.uge.adventure.gamedata.MapData;
+import fr.uge.adventure.gamedata.ObjectData;
 import fr.uge.adventure.gamedata.PlayerData;
 import fr.uge.adventure.gamedata.Position;
 import fr.uge.adventure.gamedata.Size;
@@ -32,6 +33,7 @@ public class Parser {
 	private PlayerData playerData;
 	private ArrayList<EnemyData> lstEnemyData;
 	private ArrayList<ItemData> lstItemData;
+	private ArrayList<ObjectData> lstObjData;
 
 	public Parser(String mapName, Game game) throws IOException {
 		var path = Path.of("maps", mapName + ".map");
@@ -41,6 +43,7 @@ public class Parser {
 		this.game = game;
 		this.lstEnemyData = new ArrayList<EnemyData>();
 		this.lstItemData = new ArrayList<ItemData>();
+		this.lstObjData = new ArrayList<ObjectData>();
 	}
 
 	private Result next(ArrayList<Result> tokens) {
@@ -97,7 +100,7 @@ public class Parser {
 			parseSection(tokens);
 		}
 		
-		return new GameData(mapData, playerData, lstEnemyData, lstItemData);
+		return new GameData(mapData, playerData, lstEnemyData, lstItemData, lstObjData);
 	}
 
 	private void parseSection(ArrayList<Result> tokens) {
@@ -142,6 +145,9 @@ public class Parser {
 				break;
 			case Item:
 				lstItemData.add((ItemData) eleData);
+				break;
+			case Object:
+				lstObjData.add((ObjectData) eleData);
 				break;
 			default:
 				break;
@@ -368,8 +374,8 @@ public class Parser {
 
 		HashMap<String, String> stringData = new HashMap<String, String>();
 		HashMap<String, Integer> intData = new HashMap<String, Integer>();
-		Position position = null;
-		Zone zone = null;
+		Position position = null; Zone zone = null;
+		
 
 		while (peek(tokens) != null && !peek(tokens).isToken(Token.LEFT_BRACKET)) {
 			pointerToken = next(tokens);
@@ -392,6 +398,7 @@ public class Parser {
 			case "behavior":
 			case "kind":
 			case "color":
+			case "locked":
 				stringData.put(pointerToken.content(), parseAttributeString(pointerToken.content(), tokens));
 				break;
 
@@ -422,8 +429,11 @@ public class Parser {
 		Result pointerToken;
 
 		HashMap<String, List<String>> allowedAttribute = new HashMap<String, List<String>>(
-				Map.of("kind", List.of("friend", "enemy", "item", "obstacle"), "behavior",
-						List.of("shy", "stroll", "agressive"), "player", List.of("true", "false")));
+				Map.of("kind", List.of("friend", "enemy", "item", "obstacle"), 
+					   "behavior", List.of("shy", "stroll", "agressive"), 
+					   "player", List.of("true", "false"), 
+					   "locked", List.of("KEY", "LEVER")
+						));
 
 		if (!skip(tokens, Token.COLON)) {
 			syntaxErrorHandler(Token.COLON);
@@ -444,6 +454,11 @@ public class Parser {
 			undefinedErrorHandler(pointerToken);
 			skipTo(tokens, Token.NEWLINE);
 			return null;
+		}
+		
+		if (attribute.equals("locked")) {
+			pointerToken = next(tokens);
+			nameData += " " + pointerToken.content();
 		}
 
 		return nameData;
@@ -623,6 +638,8 @@ public class Parser {
 				return new EnemyData(name, skin, position, zone, damage, behavior);
 			case "item":
 				return new ItemData(name, skin, position, stringData, intData);
+			case "obstacle":
+				return new ObjectData(name, skin, position, stringData, intData);
 			}
 			
 		}
