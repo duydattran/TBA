@@ -4,8 +4,11 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+
+import fr.uge.adventure.main.Game;
 
 public class Utilities {
 	public static BufferedImage loadImage(String path, String name) {

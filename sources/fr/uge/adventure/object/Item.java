@@ -1,4 +1,4 @@
-package fr.uge.adventure.item;
+package fr.uge.adventure.object;
 
 import java.awt.Rectangle;
 
@@ -10,6 +10,5 @@ public interface Item {
 	String skin();
 	double wrldX();
 	double wrldY();
-	Rectangle hitBox();
-	HitBox hitBoxTest();
+	HitBox hitBox();
 }

@@ -50,6 +50,29 @@ public class HitBox {
                 (tw < tx || tw > rx) &&
                 (th < ty || th > ry));
 	}
+	
+	public boolean intersectInDistance(HitBox otherHb, double distanceX, double distanceY) {
+		double tw = this.width;
+		double th = this.height;
+		double rw = otherHb.width;
+		double rh = otherHb.height;
+        if (rw <= 0 || rh <= 0 || tw <= 0 || th <= 0) {
+            return false;
+        }
+        double tx = this.wrldX + distanceX;
+        double ty = this.wrldY + distanceY;
+        double rx = otherHb.wrldX;
+        double ry = otherHb.wrldY;
+        rw += rx;
+        rh += ry;
+        tw += tx;
+        th += ty;
+        //      overflow || intersect
+        return ((rw < rx || rw > tx) &&
+                (rh < ry || rh > ty) &&
+                (tw < tx || tw > rx) &&
+                (th < ty || th > ry));
+	}
 
 	public double wrldX() {
 		return wrldX;

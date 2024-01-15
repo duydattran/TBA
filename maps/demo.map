@@ -63,6 +63,18 @@ kind: item
 damage: 15
 
 [element]
+name: burger
+skin: BURGER
+position: (48,5)
+kind: item
+
+[element]
+name: door
+skin: DOOR
+position: (49,5)
+kind: item
+
+[element]
 name: Waldo
 skin: BABA
 position: (46, 5)

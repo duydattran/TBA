@@ -1,6 +1,7 @@
-package fr.uge.adventure.item;
+package fr.uge.adventure.object;
 
 public enum ItemType {
 	key,
 	weapon,
+	food,
 }

@@ -10,20 +10,22 @@ import fr.uge.adventure.camera.Camera;
 import fr.uge.adventure.collision.CollisionChecker;
 import fr.uge.adventure.entity.Entity;
 import fr.uge.adventure.entity.Player;
-import fr.uge.adventure.entity.PlayerRenderer;
 import fr.uge.adventure.entity.Enemy;
 import fr.uge.adventure.entity.EnemyManager;
-import fr.uge.adventure.entity.EnemyRenderer;
 import fr.uge.adventure.fileloader.Parser;
 import fr.uge.adventure.gamedata.GameData;
 import fr.uge.adventure.input.InputHandler;
-import fr.uge.adventure.item.Item;
-import fr.uge.adventure.item.ItemManager;
-import fr.uge.adventure.item.ItemRenderer;
+import fr.uge.adventure.object.Item;
+import fr.uge.adventure.object.ObjectManager;
+import fr.uge.adventure.renderer.EnemyRenderer;
 import fr.uge.adventure.renderer.GameRenderer;
-import fr.uge.adventure.tile.MapRenderer;
+import fr.uge.adventure.renderer.ItemRenderer;
+import fr.uge.adventure.renderer.MapRenderer;
+import fr.uge.adventure.renderer.PlayerRenderer;
+import fr.uge.adventure.renderer.Texture;
 import fr.uge.adventure.tile.TileManager;
 import fr.uge.adventure.tile.TileMap;
+import fr.uge.adventure.ui.UIManager;
 import fr.umlv.zen5.ApplicationContext;
 import fr.umlv.zen5.Event;
 import fr.umlv.zen5.ScreenInfo;
@@ -52,14 +54,17 @@ public class Game {
 	
 	private final TileManager tileMng;
 	private final EnemyManager enemyMng;
-	private final ItemManager itemMng;
+	private final ObjectManager itemMng;
 	
 	private final Camera cam;
 	
 	private final InputHandler input;
 	private final CollisionChecker coliCheck;
+	private final UIManager uiMng;
 	
 	private final GameRenderer renderer;
+	
+	private boolean running = true;
 	
 	//DEBUG
 	private int drawCount = 0;
@@ -82,23 +87,34 @@ public class Game {
 		
 		this.input = new InputHandler();
 		this.coliCheck = new CollisionChecker(this);
+		this.uiMng = new UIManager(this);
 		
 		this.tileMng = new TileManager(this);
 		this.enemyMng = new EnemyManager(this);
-		this.itemMng = new ItemManager(this);
+		this.itemMng = new ObjectManager(this);
 		
 		this.cam = new Camera(player, scrWidth, scrHeight, this);
 		this.renderer = new GameRenderer(this);
 	}
 	
 	public void update() {
-		//check input
+		//check input		
 		Event event = context.pollOrWaitEvent(1000 / fps);
 		input.eventType(event);
 		if (input.exitPressed) {
 			context.exit(0);
 			return;
 		}
+		
+		if (input.inventory) {
+			running = false;
+			uiMng.update();
+		}
+		else 
+			running = true;
+		
+		if (!running)
+			return;
 		
 		//update events
 		player.update();
@@ -107,9 +123,8 @@ public class Game {
 		tileMng.update();
 		itemMng.update();
 		
-		Item item = coliCheck.checkObject(player);
-		if (item != null) {
-			renderer.iRenderer().deleteTexture(item);
+		Item item;
+		if ((item = player.pickUpItem())!= null) {
 			itemMng.deleteItem(item);
 		}
 		
@@ -117,6 +132,12 @@ public class Game {
 		renderer.update();
 		
 		//debug
+		
+//		System.out.println(player.health());
+		if (input.debug) {
+			player.setHealth(player.health() - 1);
+			input.debug = false;
+		}
 //		showFPS();
 	}
 	
@@ -150,6 +171,10 @@ public class Game {
 	
 	public ApplicationContext context() {
 		return this.context;
+	}
+	
+	public UIManager uiMng() {
+		return this.uiMng;
 	}
 	
 	public TileManager tileManager() {

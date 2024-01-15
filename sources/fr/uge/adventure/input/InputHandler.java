@@ -6,7 +6,9 @@ import fr.umlv.zen5.KeyboardKey;
 
 public class InputHandler {
 	public boolean upPressed, downPressed, leftPressed, rightPressed, idle, 
-				exitPressed, debug;
+				exitPressed, debug, inventory, keyHold, 
+				upTouch, downTouch, rightTouch, leftTouch,
+				chooseInventory;
 	
 	public InputHandler() {
 		this.idle = true;
@@ -16,12 +18,13 @@ public class InputHandler {
 		if (event == null) {
 			return;
 		}
-	
+		
 		Action action = event.getAction();
 		switch(action) {
 		case KEY_PRESSED: 
 			idle = false;
 			keyPressed(event.getKey());
+			keyTouch(event.getKey());
 			break;
 		case KEY_RELEASED: 
 			idle = true;
@@ -53,8 +56,12 @@ public class InputHandler {
 		case Q:
 			exitPressed = true;
 			break;
-		case Z:
-			debug = debug == true ? false : true;
+		case I:
+			inventory = inventory == true ? false : true;
+			break;
+		case SPACE:
+			if (inventory)
+				chooseInventory = true;
 			break;
 		default:
 			break;
@@ -65,15 +72,62 @@ public class InputHandler {
 		switch(key) {
 		case UP:
 			upPressed = false;
+			keyHold = false;
 			break;
 		case DOWN:
 			downPressed = false;
+			keyHold = false;
 			break;
 		case RIGHT:
 			rightPressed = false;
+			keyHold = false;
 			break;
 		case LEFT:
 			leftPressed = false;
+			keyHold = false;
+			break;
+		case SPACE:
+			chooseInventory = false;	
+			break;
+		case Z:
+			keyHold = false;
+			break;
+		default:
+			break;
+		}
+	}
+	
+	public void keyTouch(KeyboardKey key) {
+		switch(key) {
+		case UP:
+			if (keyHold == false) {
+				keyHold = true;
+				upTouch = true;
+			}
+			break;
+		case DOWN:
+			if (keyHold == false) {
+				keyHold = true;
+				downTouch = true;
+			}
+			break;
+		case RIGHT:
+			if (keyHold == false) {
+				keyHold = true;
+				rightTouch = true;
+			}
+			break;
+		case LEFT:
+			if (keyHold == false) {
+				keyHold = true;
+				leftTouch = true;
+			}
+			break;
+		case Z:
+			if (keyHold == false) {
+				keyHold = true;
+				debug = true;
+			}
 			break;
 		default:
 			break;

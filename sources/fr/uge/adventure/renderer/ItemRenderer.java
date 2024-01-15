@@ -1,4 +1,4 @@
-package fr.uge.adventure.item;
+package fr.uge.adventure.renderer;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -6,12 +6,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import fr.uge.adventure.entity.Enemy;
-import fr.uge.adventure.renderer.GameRenderer;
-import fr.uge.adventure.renderer.Timer;
+import fr.uge.adventure.object.Item;
 import fr.uge.adventure.ulti.Utilities;
 
 public class ItemRenderer {
-	private final ArrayList<ArrayList<BufferedImage>> lstItemTextures;
 	private final ArrayList<Item> lstItem;
 	private final GameRenderer gameRenderer;
 	private final ArrayList<Timer> lstAnimTimers;
@@ -23,12 +21,10 @@ public class ItemRenderer {
 		Objects.requireNonNull(gameRenderer);
 		
 		this.gameRenderer = gameRenderer;
-		this.lstItemTextures = new ArrayList<ArrayList<BufferedImage>>();
 		this.lstItem = lstItem;
 		this.lstAnimTimers = new ArrayList<Timer>();
 		this.animIndexes = new int[lstItem.size()];
 		
-		loadItemTexture();
 		initializeTimers();
 	}
 	
@@ -45,31 +41,10 @@ public class ItemRenderer {
 				continue;
 			}
 			int currentIndexAnim = animIndexes[i];
-			var texture = lstItemTextures.get(i);
+			var texture = gameRenderer.texture().lstItemTextureScaled().get(currentItem.skin());
 			BufferedImage currentTexture = texture.get(currentIndexAnim);
 			g2.drawImage(currentTexture, null, (int) (currentItem.wrldX() - gameRenderer.cam().camX()), 
 						(int) (currentItem.wrldY() - gameRenderer.cam().camY()));
-		}
-	}
-	
-	private void loadItemTexture() {
-		BufferedImage sprite = null;
-		for (var item : lstItem) {
-			
-			String pngName = item.skin().toLowerCase() + ".png";
-			System.out.println(pngName);
-			sprite = Utilities.loadImage("/fr/images/object/", pngName);
-			var textureList = new ArrayList<BufferedImage>();
-
-			for (int row = 0; row < 3; row++) {
-				for (int col = 0; col < 1; col++) {
-					BufferedImage sprFrm = Utilities.getSpriteFrame(sprite, gameRenderer.ogSprSize(), col, row); //sprite frame
-					BufferedImage sclFrm = Utilities.scaleImage(sprFrm, gameRenderer.scale()); //scaled frame
-					textureList.add(sclFrm);
-				}
-			}
-			
-			lstItemTextures.add(textureList);
 		}
 	}
 	
@@ -91,9 +66,5 @@ public class ItemRenderer {
 					animIndexes[i] = 0;
 			}
 		}
-	}
-	
-	public void deleteTexture(Item item) {
-		lstItemTextures.remove(lstItem.indexOf(item));
 	}
 }

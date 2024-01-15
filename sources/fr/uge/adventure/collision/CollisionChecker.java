@@ -1,8 +1,8 @@
 package fr.uge.adventure.collision;
 
 import fr.uge.adventure.entity.Entity;
-import fr.uge.adventure.item.Item;
 import fr.uge.adventure.main.Game;
+import fr.uge.adventure.object.Item;
 import fr.uge.adventure.tile.Tile;
 
 public class CollisionChecker {
@@ -15,21 +15,21 @@ public class CollisionChecker {
 	public void checkTile(Entity entity) {
 		int entityHorizontalTile = 0;
 		int entityVerticalTile = 0;
-		int entityLeftWorldX = (int) ((entity.wrldX() + entity.hitBox().x) / game.tileSize());
-		int entityRightWorldX = (int) ((entity.wrldX() + entity.hitBox().x + entity.hitBox().width) / game.tileSize());
-		int entityTopWorldY = (int) ((entity.wrldY() + entity.hitBox().y) / game.tileSize());
-		int entityBottomWorldY = (int) ((entity.wrldY() + entity.hitBox().y + entity.hitBox().height) / game.tileSize());
+		int entityLeftWorldX = (int) (entity.hitBox().wrldX() / game.tileSize());
+		int entityRightWorldX = (int) ((entity.hitBox().wrldX() + entity.hitBox().width()) / game.tileSize());
+		int entityTopWorldY = (int) (entity.hitBox().wrldY() / game.tileSize());
+		int entityBottomWorldY = (int) ((entity.hitBox().wrldY() + entity.hitBox().height()) / game.tileSize());
 		
 		//predict if the next position of player is in a tile thats is solid
 		if (entity.xSpd() > 0) {
-			entityHorizontalTile = (int) ((entity.wrldX() + entity.hitBox().x + entity.hitBox().width + entity.xSpd()) / game.tileSize());
+			entityHorizontalTile = (int) ((entity.hitBox().wrldX() + entity.hitBox().width() + entity.xSpd()) / game.tileSize());
 		} else if (entity.xSpd() < 0)
-			entityHorizontalTile = (int) ((entity.wrldX() + entity.hitBox().x + entity.xSpd()) / game.tileSize());
+			entityHorizontalTile = (int) ((entity.hitBox().wrldX() + entity.xSpd()) / game.tileSize());
 		
 		if (entity.ySpd() > 0) {
-			entityVerticalTile = (int) ((entity.wrldY() + entity.hitBox().y + entity.hitBox().height + entity.ySpd()) / game.tileSize());
+			entityVerticalTile = (int) ((entity.hitBox().wrldY() + entity.hitBox().height() + entity.ySpd()) / game.tileSize());
 		} else if (entity.ySpd() < 0)
-			entityVerticalTile = (int) ((entity.wrldY() + entity.hitBox().y + entity.ySpd()) / game.tileSize());
+			entityVerticalTile = (int) ((entity.hitBox().wrldY() + entity.ySpd()) / game.tileSize());
 		
 		Tile tileNum1, tileNum2, tileNum3, tileNum4;
 		
@@ -52,9 +52,9 @@ public class CollisionChecker {
 	
 	public Item checkObject(Entity entity) {
 		for (var item : game.lstItem()) {
-			if (item.hitBoxTest() == null)
+			if (item.hitBox() == null)
 				continue;
-			if (entity.hitBoxTest().intersect(item.hitBoxTest()))
+			if (entity.hitBox().intersectInDistance(item.hitBox(), entity.xSpd(), entity.ySpd()))
 				return item;
 		}
 		return null;

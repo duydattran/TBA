@@ -25,7 +25,7 @@ public class Enemy implements Element, Entity{
 	private boolean collision;
 	private Direction direction;
 	private final Game game;
-	private Rectangle hitBox;
+	private final HitBox hitBox;
 	
 	
 	public Enemy(EnemyData enemyData, Game game) {
@@ -41,11 +41,12 @@ public class Enemy implements Element, Entity{
 		this.wrldX = (double) enemyData.pos().x() * game.tileSize();
 		this.wrldY = (double) enemyData.pos().y() * game.tileSize();
 		this.direction = Direction.UP;
-		this.hitBox = new Rectangle(15, 20, (int) (game.tileSize() - 25), (int) (game.tileSize() - 20));
+		this.hitBox = new HitBox(15, 20, game.tileSize() - 25, game.tileSize() - 20);
 	}
 	
 	public void update() {
 		move();
+		hitBox.update(wrldX, wrldY);
 	}
 	
 	private void move() {
@@ -144,11 +145,6 @@ public class Enemy implements Element, Entity{
 	}
 
 	@Override
-	public Rectangle hitBox() {
-		return this.hitBox;
-	}
-
-	@Override
 	public void setXSpd(double xSpd) {
 		this.xSpd = xSpd;
 	}
@@ -185,8 +181,7 @@ public class Enemy implements Element, Entity{
 	}
 
 	@Override
-	public HitBox hitBoxTest() {
-		// TODO Auto-generated method stub
-		return null;
+	public HitBox hitBox() {
+		return this.hitBox;
 	}
 }

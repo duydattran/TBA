@@ -8,11 +8,7 @@ import java.io.IOException;
 
 import fr.uge.adventure.camera.Camera;
 import fr.uge.adventure.element.Element;
-import fr.uge.adventure.entity.EnemyRenderer;
-import fr.uge.adventure.entity.PlayerRenderer;
-import fr.uge.adventure.item.ItemRenderer;
 import fr.uge.adventure.main.Game;
-import fr.uge.adventure.tile.MapRenderer;
 
 public class GameRenderer {
 	private static double ogSprSize = 25;
@@ -20,10 +16,13 @@ public class GameRenderer {
 	private final double tileSize;
 	private final Game game;
 	
+	private final Texture texture;
+	
 	private final MapRenderer mapRenderer;
 	private final PlayerRenderer pRenderer;
 	private final EnemyRenderer eRenderer;
 	private final ItemRenderer iRenderer; 
+	private final UI ui;
 	
 	private final Camera cam;
 	private BufferedImage bufferImage;
@@ -35,10 +34,14 @@ public class GameRenderer {
 		this.tileSize = ogSprSize * scale;
 		bufferImage = new BufferedImage((int) game.scrWidth(), (int) game.scrHeight(), BufferedImage.TYPE_INT_RGB);
 		bufferGraphics = bufferImage.createGraphics();
+		
+		this.texture = new Texture(game, scale);
+		
 		this.mapRenderer = new MapRenderer(game.tileMap(), this);
 		this.pRenderer = new PlayerRenderer(game.player(), this);
 		this.eRenderer = new EnemyRenderer(game.lstEnemy(), this);
 		this.iRenderer = new ItemRenderer(game.lstItem(), this);
+		this.ui = new UI(game, this);
 		this.cam = game.camera();
 	}
 	
@@ -46,6 +49,7 @@ public class GameRenderer {
 		pRenderer.update();
 		eRenderer.update();
 		iRenderer.update();
+		ui.update();
 	}
 	
 	public void render() {
@@ -57,7 +61,13 @@ public class GameRenderer {
 			iRenderer.render(bufferGraphics);
 			pRenderer.render(bufferGraphics);
 			eRenderer.render(bufferGraphics);
-			game.player().hitBoxTest().draw(bufferGraphics, cam.camX(), cam.camY());
+//			game.player().hitBox().draw(bufferGraphics, cam.camX(), cam.camY());
+			
+			//UI
+			if (game.input().inventory)
+				ui.inventoryGrid(bufferGraphics);
+			ui.healthBar(bufferGraphics);
+			
 			//when all the elements are drawn, draw the buffer image
 			graphics.drawImage(bufferImage, null, 0, 0);
 		});
@@ -93,5 +103,9 @@ public class GameRenderer {
 	
 	public double ogSprSize() {
 		return 25;
+	}
+	
+	public Texture texture() {
+		return this.texture;
 	}
 }

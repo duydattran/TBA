@@ -1,11 +1,12 @@
-package fr.uge.adventure.tile;
+package fr.uge.adventure.renderer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
 import fr.uge.adventure.camera.Camera;
-import fr.uge.adventure.renderer.GameRenderer;
+import fr.uge.adventure.tile.TileMap;
+import fr.uge.adventure.tile.TileType;
 import fr.uge.adventure.ulti.Utilities;
 
 import java.awt.Graphics2D;

@@ -1,13 +1,14 @@
 package fr.uge.adventure.entity;
 
-import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Objects;
-
 import fr.uge.adventure.collision.HitBox;
 import fr.uge.adventure.element.Element;
 import fr.uge.adventure.element.ElementType;
-import fr.uge.adventure.gamedata.PlayerData;
 import fr.uge.adventure.main.Game;
+import fr.uge.adventure.object.Item;
+import fr.uge.adventure.object.ItemType;
+import fr.uge.adventure.object.Weapon;
 import fr.uge.adventure.ulti.Direction;
 
 public class Player implements Element, Entity{
@@ -22,9 +23,11 @@ public class Player implements Element, Entity{
 	private boolean collision;
 	private Direction direction;
 	private final Game game;
-	private Rectangle hitBox;
-	private final HitBox hitBoxTest;
+	private final HitBox hitBox;
 	
+	private Weapon weapon = null;
+	
+	private final ArrayList<Item> inventory;
 	
 	public Player(Game game) {
 		Objects.requireNonNull(game);
@@ -34,19 +37,19 @@ public class Player implements Element, Entity{
 		this.name = game.data().playerData().name();
 		this.skin = game.data().playerData().skin();
 		this.setHealth(game.data().playerData().health());
+		this.inventory = new ArrayList<Item>();
 		
 		this.wrldX = (double) game.data().playerData().pos().x() * game.tileSize();
 		this.wrldY = (double) game.data().playerData().pos().y() * game.tileSize();
 		this.scrX = game.scrWidth() / 2;
 		this.scrY = game.scrHeight() / 2;
 		this.direction = Direction.UP;
-		this.hitBox = new Rectangle(15, 20, (int) (game.tileSize() - 25), (int) (game.tileSize() - 20));
-		this.hitBoxTest = new HitBox(15, 20, game.tileSize() - 25, game.tileSize() - 20);
+		this.hitBox = new HitBox(15, 20, game.tileSize() - 25, game.tileSize() - 20);
 	}
 	
 	public void update() {
 		move();
-		hitBoxTest.update(wrldX, wrldY);
+		hitBox.update(wrldX, wrldY);
 	}
 	
 	private void move() {
@@ -88,10 +91,46 @@ public class Player implements Element, Entity{
 		wrldY += ySpd;
 	}
 	
-	public HitBox hitBoxTest() {
-		return this.hitBoxTest;
+	public Item pickUpItem() {
+		Item item = game.coliCheck().checkObject(this);
+		if (item != null) {
+			inventory.add(item);
+		}
+		return item;
 	}
 	
+	public void useItem() {
+		int index;
+		if (!game.input().chooseInventory)
+			return;
+		
+		index = game.uiMng().y() * 3 + game.uiMng().x();
+		if (index >= inventory.size())
+			return;
+		
+		Item item = inventory.get(index);
+		
+		if (item == null)
+			return;
+			
+		switch(item.itemType()) {
+		case weapon:
+			setWeapon((Weapon) item);
+			break;
+		case food:
+			inventory.remove(item);
+			health += 1;
+			break;
+		default:
+			break;
+		}
+			
+	}
+	
+	public ArrayList<Item> inventory() {
+		return this.inventory;
+	}
+
 	@Override
 	public double wrldX() {
 		return this.wrldX;
@@ -141,11 +180,6 @@ public class Player implements Element, Entity{
 	}
 
 	@Override
-	public Rectangle hitBox() {
-		return this.hitBox;
-	}
-
-	@Override
 	public void setXSpd(double xSpd) {
 		this.xSpd = xSpd;
 	}
@@ -179,5 +213,18 @@ public class Player implements Element, Entity{
 
 	public void setHealth(double health) {
 		this.health = health;
+	}
+
+	@Override
+	public HitBox hitBox() {
+		return this.hitBox;
+	}
+
+	public Weapon weapon() {
+		return weapon;
+	}
+
+	public void setWeapon(Weapon weapon) {
+		this.weapon = weapon;
 	}
 }
