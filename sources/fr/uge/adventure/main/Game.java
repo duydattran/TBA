@@ -5,9 +5,9 @@ import java.util.ArrayList;
 
 import fr.uge.adventure.camera.Camera;
 import fr.uge.adventure.collision.CollisionChecker;
-import fr.uge.adventure.entity.Player;
 import fr.uge.adventure.entity.Enemy;
 import fr.uge.adventure.entity.EnemyManager;
+import fr.uge.adventure.entity.Player;
 import fr.uge.adventure.fileloader.Parser;
 import fr.uge.adventure.gamedata.GameData;
 import fr.uge.adventure.input.InputHandler;
@@ -22,96 +22,94 @@ import fr.uge.adventure.ui.UIManager;
 import fr.umlv.zen5.ApplicationContext;
 import fr.umlv.zen5.Event;
 
-public class Game {	
+public class Game {
 	private static double ogSprSize = 25;
 	private final double tileSize;
 	//FPS
 	private final int fps = 120; //set a little more than 60 because the method
 								//to calculate the waiting time is not 100% accurate
-	
+
 	//SCREEN SET UP
 	private final int maxScrCol = 32; //32
 	private final int maxScrRow = 18; //18
 	private final double scrWidth;
 	private final double scrHeight;
 	private final ApplicationContext context;
-	
+
 	private String mapName;
 	private final GameData data;
-	
+
 	private final Player player;
 	private final TileMap tileMap;
 	private final ArrayList<Enemy> lstEnemy;
 	private final ArrayList<Item> lstItem;
 	private final ArrayList<GameObject> lstObject;
-	
+
 	private final TileManager tileMng;
 	private final EnemyManager enemyMng;
 	private final ItemManager itemMng;
 	private final ObjectManager objMng;
-	
+
 	private final Camera cam;
-	
+
 	private final InputHandler input;
 	private final CollisionChecker coliCheck;
 	private final UIManager uiMng;
-	
+
 	private final GameRenderer renderer;
 	
+	private GameState gameState;
+
 	private boolean running = true;
-	
+
 	//DEBUG
 	private int drawCount = 0;
 	private long lastTime = System.nanoTime();
 	private long currentTime;
 	private long timerFps = 0;
-	
-	public Game(ApplicationContext context, String mapName) throws IOException {		
+
+	public Game(ApplicationContext context, String mapName) throws IOException {
+		this.gameState = GameState.running;
 		this.context = context;
 		this.scrHeight = context.getScreenInfo().getHeight();
 		this.scrWidth = context.getScreenInfo().getWidth();
 		this.mapName = mapName;
 		this.tileSize =  ogSprSize * scaleCalc();
 		this.data = loadGameData();
-		
+
 		this.player = new Player(this);
 		this.tileMap = new TileMap(data.map());
-		this.lstEnemy = new ArrayList<Enemy>();
-		this.lstItem = new ArrayList<Item>();
-		this.lstObject = new ArrayList<GameObject>();
-		
-		this.input = new InputHandler();
+		this.lstEnemy = new ArrayList<>();
+		this.lstItem = new ArrayList<>();
+		this.lstObject = new ArrayList<>();
+
+		this.input = new InputHandler(this);
 		this.coliCheck = new CollisionChecker(this);
 		this.uiMng = new UIManager(this);
-		
+
 		this.tileMng = new TileManager(this);
 		this.enemyMng = new EnemyManager(this);
 		this.itemMng = new ItemManager(this);
 		this.objMng = new ObjectManager(this);
-		
+
 		this.cam = new Camera(player, scrWidth, scrHeight, this);
 		this.renderer = new GameRenderer(this);
 	}
-	
-	public void update() {	
-		//check input		
+
+	public void update() {
+		//check input
 		Event event = context.pollOrWaitEvent(1000 / fps);
 		input.eventType(event);
 		if (input.exitPressed) {
 			context.exit(0);
 			return;
 		}
-		
-		if (input.inventory) {
-			running = false;
-			uiMng.update();
-		}
-		else 
-			running = true;
-		
-		if (!running)
+
+		uiMng.update();
+
+		if (gameState != GameState.running)
 			return;
-		
+
 		//update events
 		player.update();
 		cam.update();
@@ -119,30 +117,29 @@ public class Game {
 		tileMng.update();
 		itemMng.update();
 		objMng.update();
-		
+
 		Item item;
 		if ((item = player.pickUpItem())!= null) {
 			itemMng.deleteItem(item);
 		}
-		
+
 		//update animation
 		renderer.update();
-		
+
 		//debug
-		
-//		System.out.println(player.health());
+
 		if (input.debug) {
 			player.setHealth(player.health() - 1);
 			input.debug = false;
 		}
 //		showFPS();
 	}
-	
+
 	public void render() {
 		renderer.render();
 		drawCount++;
 	}
-	
+
 	//DEBUG FUNCTIONS
 	private void showFPS() {
 		currentTime = System.nanoTime();
@@ -154,50 +151,50 @@ public class Game {
 			timerFps = 0;
 		}
 	}
-	
+
 	public double scaleCalc() {
-		double heightScale = (double) scrHeight / (double) (maxScrRow * ogSprSize);
-		double widthScale = (double) scrWidth / (double) (maxScrCol * ogSprSize);
+		double heightScale = scrHeight / (maxScrRow * ogSprSize);
+		double widthScale = scrWidth / (maxScrCol * ogSprSize);
 		return Math.max(heightScale, widthScale);
 	}
-	
+
 	public GameData loadGameData() throws IOException {
 		GameData data = new Parser(mapName, this).parse();
 		return data;
 	}
-	
+
 	public ApplicationContext context() {
 		return this.context;
 	}
-	
+
 	public UIManager uiMng() {
 		return this.uiMng;
 	}
-	
+
 	public TileManager tileManager() {
 		return this.tileMng;
 	}
-	
+
 	public GameData data() {
 		return this.data;
 	}
-	
+
 	public String mapName() {
 		return this.mapName;
 	}
-	
+
 	public double scrWidth() {
 		return this.scrWidth;
 	}
-	
+
 	public double scrHeight() {
 		return this.scrHeight;
 	}
-	
+
 	public int maxScrCol() {
 		return this.maxScrCol;
 	}
-	
+
 	public int maxScrRow() {
 		return this.maxScrRow;
 	}
@@ -209,7 +206,7 @@ public class Game {
 	public Player player() {
 		return player;
 	}
-	
+
 	public InputHandler input() {
 		return this.input;
 	}
@@ -217,7 +214,7 @@ public class Game {
 	public double tileSize() {
 		return this.tileSize;
 	}
-	
+
 	public TileMap tileMap() {
 		return this.tileMap;
 	}
@@ -240,5 +237,13 @@ public class Game {
 
 	public ArrayList<GameObject> lstObject() {
 		return lstObject;
+	}
+
+	public GameState gameState() {
+		return gameState;
+	}
+
+	public void setGameState(GameState gameState) {
+		this.gameState = gameState;
 	}
 }

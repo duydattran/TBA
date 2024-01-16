@@ -10,6 +10,7 @@ import java.io.IOException;
 import fr.uge.adventure.camera.Camera;
 import fr.uge.adventure.element.Element;
 import fr.uge.adventure.main.Game;
+import fr.uge.adventure.main.GameState;
 
 public class GameRenderer {
 	private static double ogSprSize = 25;
@@ -69,12 +70,17 @@ public class GameRenderer {
 //			game.player().hitBox().draw(bufferGraphics, cam.camX(), cam.camY());
 			
 			//UI
-			if (game.input().inventory)
+			if (game.gameState() == GameState.inventoryScr)
 				ui.inventoryGrid(bufferGraphics);
-			ui.healthBar(bufferGraphics);
-			ui.message(bufferGraphics);
-			ui.equipment(bufferGraphics);
-			ui.weapon(bufferGraphics);
+			if (game.gameState() == GameState.inventoryScr || game.gameState() == GameState.running) {
+				ui.healthBar(bufferGraphics);
+				ui.equipment(bufferGraphics);
+				ui.weapon(bufferGraphics);
+			}
+			if (game.gameState() == GameState.dialogueScr) {
+				ui.textBox(bufferGraphics);
+				ui.textBoxString(bufferGraphics, "hello", game.uiMng().contentTextBox());
+			}
 			
 			//when all the elements are drawn, draw the buffer image
 			graphics.drawImage(bufferImage, null, 0, 0);
@@ -95,6 +101,10 @@ public class GameRenderer {
 	
 	public ItemRenderer iRenderer() {
 		return this.iRenderer;
+	}
+	
+	public UI ui() {
+		return this.ui;
 	}
 	
 	public Camera cam() {

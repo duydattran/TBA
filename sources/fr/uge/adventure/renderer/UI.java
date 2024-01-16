@@ -17,6 +17,9 @@ public class UI {
 	private final GameRenderer gameRenderer;
 	private static int cellSize = 160;
 	private final Font font;
+	private int textCursor = 0;
+	private static int maxLineTextBox = 6;
+	private ArrayList<String> contentAdapt;
 	
 	public UI(Game game, GameRenderer gameRenderer) {
 		Objects.requireNonNull(game);
@@ -34,6 +37,72 @@ public class UI {
 		g2.setFont(font.deriveFont(24f));
 		g2.setColor(Color.white);
 		g2.drawString("hello dit me may", 100, 100);
+	}
+	
+	public void textBox(Graphics2D g2) {
+		double offSetX = 400;
+		double offSetY = 700;
+		double width = game.scrWidth() - 2 * offSetX;
+		double height = 300;
+		
+		g2.setColor(new Color(0, 0, 0, 200));
+		g2.fillRoundRect((int) (offSetX),(int) (offSetY),(int) width, (int)height, 20, 20);
+		g2.setColor(new Color(255, 255, 255, 200));
+		g2.drawRoundRect((int) (offSetX),(int) (offSetY),(int) width, (int)height, 20, 20);
+	}
+	
+	public void textBoxString(Graphics2D g2, String name, String content) {
+		//name
+		double offSetX = 400;
+		double offSetY = 690;
+		double width = game.scrWidth() - 2 * offSetX;
+		double height = 300;
+		double lineSpace = 36;
+		
+		g2.setColor(new Color(255, 255, 255, 200));
+		g2.setFont(font.deriveFont(32f));
+		if (name != null)
+			g2.drawString(name, (int)offSetX, (int)offSetY);
+		
+		//content
+		offSetX = 430;
+		offSetY = 750;
+		
+		g2.setColor(new Color(255, 255, 255, 200));
+		g2.setFont(font.deriveFont(32f));
+		
+		contentAdapt = adaptTextBoxContent(width, content, 32f);
+		
+		for (int i = 0; i < maxLineTextBox; i++) {
+			if (i + textCursor < contentAdapt.size())
+				g2.drawString(contentAdapt.get(i + textCursor), (int)offSetX, (int)(offSetY + i * lineSpace));
+		}
+	}
+	
+	private ArrayList<String> adaptTextBoxContent(double widthTextBox, String inputString, double fontSize) {
+		ArrayList<String> res = new ArrayList<String>();
+		String[] words = inputString.split(" ");
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < words.length; i++) {
+			builder.append(words[i]);
+			builder.append(" ");
+			if (i < words.length - 1 && 
+					(builder.length() + words[i + 1].length()) * (fontSize / 2) > widthTextBox - 2 * fontSize) {
+				res.add(builder.toString());
+				builder = new StringBuilder();
+			}
+			else if (i == words.length - 1) {
+				if ((builder.length() + words[i].length()) * (fontSize / 2) > widthTextBox - 2 * fontSize) {
+					builder.delete(builder.length() - words[i].length() - 1, builder.length());
+					res.add(builder.toString());
+					res.add(words[i]);
+				}
+				else {
+					res.add(builder.toString());
+				}
+			}
+		}
+		return res;
 	}
 	
 	public void equipment(Graphics2D g2) {
@@ -113,7 +182,7 @@ public class UI {
 				g2.setColor(new Color(0, 0, 0, 109));
 				g2.drawRoundRect(x, y, cellSize, cellSize, 20, 20);
 				
-				if (game.uiMng().x() == col && game.uiMng().y() == row)
+				if (game.uiMng().xCursorInv() == col && game.uiMng().yCursorInv() == row)
 					g2.setColor(new Color(255, 255, 255, 200));
 				else 
 					g2.setColor(new Color(0, 0, 0, 100));
@@ -143,5 +212,21 @@ public class UI {
 		for (int i = 0; i < game.player().health(); i++) {
 			g2.drawImage(currentFrame, null, (int)(x + i * (currentFrame.getWidth() + padding)), (int)y);
 		}
+	}
+
+	public int textCursor() {
+		return textCursor;
+	}
+
+	public void setTextCursor(int textCursor) {
+		this.textCursor = textCursor;
+	}
+
+	public ArrayList<String> contentAdapt() {
+		return contentAdapt;
+	}
+
+	public void setContentAdapt(ArrayList<String> contentAdapt) {
+		this.contentAdapt = contentAdapt;
 	}
 }

@@ -45,7 +45,7 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGFWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 name: John
 player: true
 skin: BADBAD
-position: (45,5)
+position: (45,8)
 health: 10
 
 [element]

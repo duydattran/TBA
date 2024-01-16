@@ -1,6 +1,9 @@
 package fr.uge.adventure.entity;
 
+import java.util.ArrayList;
+
 import fr.uge.adventure.collision.HitBox;
+import fr.uge.adventure.item.Item;
 import fr.uge.adventure.ulti.Direction;
 
 public interface Entity {
@@ -18,4 +21,8 @@ public interface Entity {
 	boolean collision();
 	Direction direction();
 	HitBox hitBox();
+	Item item();
+	void setItem(Item item);
+	ArrayList<Item> inventory();
+	double attackRange();
 }

@@ -65,12 +65,86 @@ public class CollisionChecker {
 		for (var obj : game.lstObject()) {
 			if (obj.hitBox() == null)
 				continue;
-			if (entity.hitBox().intersectInDistance(obj.hitBox(), entity.xSpd(), entity.ySpd())) {
-				if (obj.isCollidable()) {
-					entity.setXSpd(0);
-					entity.setYSpd(0);
+			switch(game.player().direction()) {
+			case UP:
+			case DOWN:
+				if (entity.hitBox().intersectInDistance(obj.hitBox(), 0, entity.ySpd())) {
+					if (obj.isCollidable()) {
+						entity.setYSpd(0);
+					}
+					return obj;
 				}
-				return obj;
+			case LEFT:
+			case RIGHT:
+				if (entity.hitBox().intersectInDistance(obj.hitBox(), entity.xSpd(), 0)) {
+					if (obj.isCollidable()) {
+						entity.setXSpd(0);
+					}
+					return obj;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public Entity checkEntity(Entity entity) {
+		for (var enemy : game.lstEnemy()) {
+			if (enemy.hitBox() == null) 
+				continue;
+			switch(game.player().direction()) {
+			case UP:
+			case DOWN:
+				if (entity.hitBox().intersectInDistance(enemy.hitBox(), 0, entity.ySpd())) {
+					entity.setYSpd(0);
+					return enemy;
+				}
+			case LEFT:
+			case RIGHT:
+				if (entity.hitBox().intersectInDistance(enemy.hitBox(), entity.xSpd(), 0)) {
+					entity.setXSpd(0);
+					return enemy;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public boolean checkPlayer(Entity entity) {
+		if (game.player().hitBox() == null) 
+			return false;
+		if (entity.hitBox().intersectInDistance(game.player().hitBox(), entity.xSpd(), entity.ySpd())) {
+			entity.setXSpd(0);
+			entity.setYSpd(0);
+			return true;
+		}
+		return false;
+	}
+	
+	public Entity hitDetectEnemy(Entity entity) {
+		for (var enemy : game.lstEnemy()) {
+			if (enemy.hitBox() == null) 
+				continue;
+			switch(game.player().direction()) {
+			case UP:
+				if (entity.hitBox().intersectInDistance(enemy.hitBox(), 0, -1 * game.player().attackRange())) {
+					return enemy;
+				}
+				break;
+			case DOWN:
+				if (entity.hitBox().intersectInDistance(enemy.hitBox(), 0, game.player().attackRange())) {
+					return enemy;
+				}
+				break;
+			case LEFT:
+				if (entity.hitBox().intersectInDistance(enemy.hitBox(), -1 * game.player().attackRange(), 0)) {
+					return enemy;
+				}
+				break;
+			case RIGHT:
+				if (entity.hitBox().intersectInDistance(enemy.hitBox(), game.player().attackRange(), 0)) {
+					return enemy;
+				}
+				break;
 			}
 		}
 		return null;

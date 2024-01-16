@@ -27,7 +27,10 @@ public class Player implements Element, Entity{
 	private final Game game;
 	private final HitBox hitBox;
 	
+	private PlayerState playerState;
+	
 	private final double interactRange = 50;
+	private final double attackRange = 50;
 	
 	private Weapon weapon = null;
 	private Item item = null;
@@ -43,6 +46,7 @@ public class Player implements Element, Entity{
 		this.skin = game.data().playerData().skin();
 		this.setHealth(game.data().playerData().health());
 		this.inventory = new ArrayList<Item>();
+		this.playerState = PlayerState.normal;
 		
 		this.wrldX = (double) game.data().playerData().pos().x() * game.tileSize();
 		this.wrldY = (double) game.data().playerData().pos().y() * game.tileSize();
@@ -53,9 +57,13 @@ public class Player implements Element, Entity{
 	}
 	
 	public void update() {
-		move();
+		if (playerState == PlayerState.normal)
+			move();
+		if (playerState != PlayerState.attack && weapon != null)
+			attack();
 		hitBox.update(wrldX, wrldY);
 		game.coliCheck().checkTile(this);
+		game.coliCheck().checkEntity(this);
 		interact();
 		wrldX += xSpd;
 		wrldY += ySpd;
@@ -95,6 +103,18 @@ public class Player implements Element, Entity{
 		}
 	}
 	
+	public void attack() {
+		if (game.input().spaceTouch) {
+			game.input().spaceTouch = false;
+			System.out.println("attack");
+			playerState = PlayerState.attack;
+			Entity entity = game.coliCheck().hitDetectEnemy(this);
+			if (entity != null) {
+				game.lstEnemy().remove(entity);
+			}
+		}
+	}
+	
 	public Item pickUpItem() {
 		Item item = game.coliCheck().checkItem(this);
 		if (item != null) {
@@ -109,13 +129,7 @@ public class Player implements Element, Entity{
 			return;
 		switch(object.objType()) {
 		case door:
-			Door door = (Door) object;
-			if (item != null && item.itemType() == ItemType.key &&
-				item.name().equals(door.nameOpen())) {
-				game.lstObject().remove(object);
-				this.item = null;
-				inventory.remove(item);
-			}
+			object.event(this, true);
 			break;
 		default:
 			break;
@@ -124,10 +138,10 @@ public class Player implements Element, Entity{
 	
 	public void useItem() {
 		int index;
-		if (!game.input().chooseInventory)
+		if (!game.input().spaceTouch)
 			return;
-		game.input().chooseInventory = false;
-		index = game.uiMng().y() * 3 + game.uiMng().x();
+		game.input().spaceTouch = false;
+		index = game.uiMng().yCursorInv() * 3 + game.uiMng().xCursorInv();
 		if (index >= inventory.size())
 			return;
 		
@@ -154,6 +168,14 @@ public class Player implements Element, Entity{
 			break;
 		}
 			
+	}
+	
+	public PlayerState playerState() {
+		return this.playerState;
+	}
+	
+	public void setPlayerState(PlayerState playerState) {
+		this.playerState = playerState;
 	}
 	
 	public ArrayList<Item> inventory() {
@@ -263,5 +285,9 @@ public class Player implements Element, Entity{
 
 	public void setItem(Item item) {
 		this.item = item;
+	}
+
+	public double attackRange() {
+		return attackRange;
 	}
 }

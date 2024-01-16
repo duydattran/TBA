@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Objects;
 import fr.uge.adventure.item.Item;
+import fr.uge.adventure.ulti.Utilities;
 
 public class ItemRenderer {
 	private final ArrayList<Item> lstItem;

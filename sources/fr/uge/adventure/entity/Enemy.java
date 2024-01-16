@@ -1,6 +1,7 @@
 package fr.uge.adventure.entity;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
@@ -8,6 +9,7 @@ import fr.uge.adventure.collision.HitBox;
 import fr.uge.adventure.element.Element;
 import fr.uge.adventure.element.ElementType;
 import fr.uge.adventure.gamedata.EnemyData;
+import fr.uge.adventure.item.Item;
 import fr.uge.adventure.main.Game;
 import fr.uge.adventure.ulti.Direction;
 
@@ -47,6 +49,11 @@ public class Enemy implements Element, Entity{
 	public void update() {
 		move();
 		hitBox.update(wrldX, wrldY);
+		game.coliCheck().checkTile(this);
+		if (game.coliCheck().checkPlayer(this))
+			game.player().setHealth(game.player().health() - 1);
+		wrldX += xSpd;
+		wrldY += ySpd;
 	}
 	
 	private void move() {
@@ -89,11 +96,6 @@ public class Enemy implements Element, Entity{
 			xSpd = normalizedX * speed();
 			ySpd = normalizedY * speed();
 		}
-		
-		game.coliCheck().checkTile(this);
-		
-		wrldX += xSpd;
-		wrldY += ySpd;
 	}
 	
 	@Override
@@ -183,5 +185,29 @@ public class Enemy implements Element, Entity{
 	@Override
 	public HitBox hitBox() {
 		return this.hitBox;
+	}
+
+	@Override
+	public Item item() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setItem(Item item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ArrayList<Item> inventory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public double attackRange() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

@@ -1,5 +1,7 @@
 package fr.uge.adventure.input;
 
+import fr.uge.adventure.main.Game;
+import fr.uge.adventure.main.GameState;
 import fr.umlv.zen5.Event;
 import fr.umlv.zen5.Event.Action;
 import fr.umlv.zen5.KeyboardKey;
@@ -8,10 +10,13 @@ public class InputHandler {
 	public boolean upPressed, downPressed, leftPressed, rightPressed, idle, 
 				exitPressed, debug, inventory, keyHold, 
 				upTouch, downTouch, rightTouch, leftTouch,
-				chooseInventory;
+				spaceTouch;
 	
-	public InputHandler() {
+	private final Game game;
+	
+	public InputHandler(Game game) {
 		this.idle = true;
+		this.game = game;
 	}
 	
 	public void eventType(Event event) {
@@ -57,7 +62,7 @@ public class InputHandler {
 			exitPressed = true;
 			break;
 		case I:
-			inventory = inventory == true ? false : true;
+			game.setGameState(game.gameState() == GameState.inventoryScr ? GameState.running : GameState.inventoryScr);
 			break;
 		default:
 			break;
@@ -83,7 +88,7 @@ public class InputHandler {
 			keyHold = false;
 			break;
 		case SPACE:
-			chooseInventory = false;	
+			spaceTouch = false;	
 			keyHold = false;
 			break;
 		case Z:
@@ -129,7 +134,7 @@ public class InputHandler {
 		case SPACE:
 			if (keyHold == false) {
 				keyHold = true;
-				chooseInventory = true;
+				spaceTouch = true;
 			}
 			break;
 		default:
