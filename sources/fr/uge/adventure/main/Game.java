@@ -30,8 +30,8 @@ public class Game {
 								//to calculate the waiting time is not 100% accurate
 
 	//SCREEN SET UP
-	private final int maxScrCol = 32; //32
-	private final int maxScrRow = 18; //18
+	private final int maxScrCol = 64; //32
+	private final int maxScrRow = 36; //18
 	private final double scrWidth;
 	private final double scrHeight;
 	private final ApplicationContext context;

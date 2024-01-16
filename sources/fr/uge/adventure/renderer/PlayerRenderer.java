@@ -19,7 +19,9 @@ public class PlayerRenderer {
 	private final Player player;
 	private final GameRenderer gameRenderer;
 	private final Timer animTimer;
-	private long animationTime = 100; // milliseconds
+	private final Timer blinkTimer;
+	private long animationTime = 100000000; // 0.1 sec
+	private static long blinkTime = 100000000;
 	private int animIndex;
 	private double weaponAngle = 0;
 	private boolean attack = false;
@@ -37,12 +39,18 @@ public class PlayerRenderer {
 		loadPlayerTexture(gameRenderer.ogSprSize());
 		
 		this.animTimer = new Timer();
+		this.blinkTimer = new Timer();
 	}
 	
 	public void update() {
 		animatePlayer();
+		
 		if (player.playerState() == PlayerState.attack) {
 			weaponAnimation();
+		}
+		
+		if (player.playerState() == PlayerState.hurt) {
+			blinkTimer.update();
 		}
 		updateWeaponDirection();
 		if (player.weapon() != null && weaponTexture.size() == 0)
@@ -72,7 +80,10 @@ public class PlayerRenderer {
 		}
 		if (weaponX == 0 && weaponY == 0 && attack) {
 			attack = false;
-			player.setPlayerState(PlayerState.normal);
+			if (player.playerState() != PlayerState.hurt)
+				player.setPlayerState(PlayerState.normal);
+			else
+				player.setPlayerState(PlayerState.hurt);
 		}
 	}
 	
@@ -81,8 +92,17 @@ public class PlayerRenderer {
 		Objects.requireNonNull(g2);
 		Camera cam = gameRenderer.cam();
 		
-		g2.drawImage(pTexture.get(player.direction()).get(animIndex), null, (int) (player.wrldX() - cam.camX()), 
-				(int) (player.wrldY() - cam.camY()));				
+		if (player.playerState() == PlayerState.normal || player.playerState() == PlayerState.attack)
+			g2.drawImage(pTexture.get(player.direction()).get(animIndex), null, (int) (player.wrldX() - cam.camX()), 
+					(int) (player.wrldY() - cam.camY()));	
+		
+		if (player.playerState() == PlayerState.hurt)
+			if (blinkTimer.tick() < blinkTime) {
+				g2.drawImage(pTexture.get(player.direction()).get(animIndex), null, (int) (player.wrldX() - cam.camX()), 
+						(int) (player.wrldY() - cam.camY()));
+			}
+			else 
+				blinkTimer.reset();
 		
 		renderWeapon(g2);						
 	}
@@ -185,7 +205,7 @@ public class PlayerRenderer {
 			animIndex = 0;
 		}
 		
-		if (animTimer.tick() >= animationTime * 1000000) {
+		if (animTimer.tick() >= animationTime) {
 			animTimer.reset();
 			animIndex++;
 			if (animIndex >= 11)

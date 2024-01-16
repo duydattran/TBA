@@ -41,20 +41,20 @@ public class UI {
 	
 	public void textBox(Graphics2D g2) {
 		double offSetX = 400;
-		double offSetY = 700;
+		double offSetY = 400;
 		double width = game.scrWidth() - 2 * offSetX;
 		double height = 300;
 		
 		g2.setColor(new Color(0, 0, 0, 200));
-		g2.fillRoundRect((int) (offSetX),(int) (offSetY),(int) width, (int)height, 20, 20);
+		g2.fillRoundRect((int) (offSetX),(int) (game.scrHeight() - offSetY),(int) width, (int)height, 20, 20);
 		g2.setColor(new Color(255, 255, 255, 200));
-		g2.drawRoundRect((int) (offSetX),(int) (offSetY),(int) width, (int)height, 20, 20);
+		g2.drawRoundRect((int) (offSetX),(int) (game.scrHeight() - offSetY),(int) width, (int)height, 20, 20);
 	}
 	
 	public void textBoxString(Graphics2D g2, String name, String content) {
 		//name
 		double offSetX = 400;
-		double offSetY = 690;
+		double offSetY = 430;
 		double width = game.scrWidth() - 2 * offSetX;
 		double height = 300;
 		double lineSpace = 36;
@@ -62,11 +62,11 @@ public class UI {
 		g2.setColor(new Color(255, 255, 255, 200));
 		g2.setFont(font.deriveFont(32f));
 		if (name != null)
-			g2.drawString(name, (int)offSetX, (int)offSetY);
+			g2.drawString(name, (int)offSetX, (int)(game.scrHeight() - offSetY));
 		
 		//content
 		offSetX = 430;
-		offSetY = 750;
+		offSetY = 340;
 		
 		g2.setColor(new Color(255, 255, 255, 200));
 		g2.setFont(font.deriveFont(32f));
@@ -75,7 +75,7 @@ public class UI {
 		
 		for (int i = 0; i < maxLineTextBox; i++) {
 			if (i + textCursor < contentAdapt.size())
-				g2.drawString(contentAdapt.get(i + textCursor), (int)offSetX, (int)(offSetY + i * lineSpace));
+				g2.drawString(contentAdapt.get(i + textCursor), (int)offSetX, (int)(game.scrHeight() - offSetY + i * lineSpace));
 		}
 	}
 	
@@ -107,12 +107,12 @@ public class UI {
 	
 	public void equipment(Graphics2D g2) {
 		double offSetX = 120;
-		double offSetY = 900;
+		double offSetY = 300;
 		double width = 100;
 		double height = 120;
 		
 		g2.setColor(new Color(200, 195, 148, 200));
-		g2.fillRoundRect((int)offSetX, (int)offSetY, (int)width, (int)height, 20, 20);
+		g2.fillRoundRect((int)offSetX, (int)(game.scrHeight() - offSetY), (int)width, (int)height, 20, 20);
 		
 		if (game.player().item() != null) {
 			BufferedImage texture = null;
@@ -120,9 +120,9 @@ public class UI {
 			g2.setColor(Color.white);
 			texture = gameRenderer.texture().lstItemTextureUI().get(game.player().item().skin()).get(0);
 			if (texture != null) {
-				g2.drawImage(texture, null, (int)(offSetX + 5), (int)(offSetY + 15));
+				g2.drawImage(texture, null, (int)(offSetX + 5), (int)(game.scrHeight() - offSetY + 15));
 				g2.drawString(game.player().item().name(), (int)(offSetX + width / 2 - 4 * game.player().item().name().length()), 
-														   (int)(offSetY + height / 2 + 50)
+														   (int)(game.scrHeight() - offSetY + height / 2 + 50)
 														   );
 			}
 		}
@@ -130,12 +130,12 @@ public class UI {
 	
 	public void weapon(Graphics2D g2) {
 		double offSetX = 120;
-		double offSetY = 760;
+		double offSetY = 450;
 		double width = 100;
 		double height = 120;
 		
 		g2.setColor(new Color(200, 195, 148, 200));
-		g2.fillRoundRect((int)offSetX, (int)offSetY, (int)width, (int)height, 20, 20);
+		g2.fillRoundRect((int)offSetX, (int)(game.scrHeight() - offSetY), (int)width, (int)height, 20, 20);
 		
 		if (game.player().weapon() != null) {
 			BufferedImage texture = null;
@@ -143,34 +143,34 @@ public class UI {
 			g2.setColor(Color.white);
 			texture = gameRenderer.texture().lstItemTextureUI().get(game.player().weapon().skin()).get(0);
 			if (texture != null) {
-				g2.drawImage(texture, null, (int)(offSetX + 5), (int)(offSetY + 15));
+				g2.drawImage(texture, null, (int)(offSetX + 5), (int)(game.scrHeight() - offSetY + 15));
 				g2.drawString(game.player().weapon().name(), (int)(offSetX + width / 2 - 4 * game.player().weapon().name().length()), 
-														   (int)(offSetY + height / 2 + 50)
+														   (int)(game.scrHeight() - offSetY + height / 2 + 50)
 														   );
 			}
 		}
 	}
 	
 	public void inventoryGrid(Graphics2D g2) {
-		double offSetX = 400;
-		double offSetY = 100;
-		double width = game.scrWidth() - 2 * offSetX;
-		double height = game.scrHeight() - 4 * offSetY;
+		int cols = 3, rows = 4;
+		double width = 1120;
+		double height = 680;
+		double offSetX = (game.scrWidth() - width) / 2;
+		double offSetY = (game.scrHeight() - height) / 2;
 		
 		g2.setColor(new Color(0, 0, 0, 230));
 		g2.fill(new Rectangle(0, 0, (int)game.scrWidth(), (int)game.scrHeight()));
 		
 		g2.setColor(new Color(200, 195, 148, 200));
-		g2.fillRoundRect((int) offSetX,(int) (2 * offSetY),(int) width, (int)height, 20, 20);
+		g2.fillRoundRect((int) offSetX,(int) offSetY,(int) width, (int)height, 20, 20);
 		
 		offSetX += width / 2 + 50;
-		offSetY = 2 * (offSetY + 20) - 20;
-		int cols = 3, rows = 4;
+		offSetY += 20;
 		width = cellSize * cols;
 		height = cellSize * rows;
 		
 		g2.setColor(new Color(175, 172, 154, 200));
-		g2.fillRoundRect((int) (offSetX),(int) (offSetY),(int) width, (int)height, 20, 20);
+		g2.fillRoundRect((int) offSetX,(int) offSetY,(int) width, (int)height, 20, 20);
 		
 		int x, y;
 		

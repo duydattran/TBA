@@ -51,7 +51,7 @@ public class Enemy implements Element, Entity{
 		hitBox.update(wrldX, wrldY);
 		game.coliCheck().checkTile(this);
 		if (game.coliCheck().checkPlayer(this))
-			game.player().setHealth(game.player().health() - 1);
+			attack();
 		wrldX += xSpd;
 		wrldY += ySpd;
 	}
@@ -95,6 +95,13 @@ public class Enemy implements Element, Entity{
 			normalizedY = yDir / length;
 			xSpd = normalizedX * speed();
 			ySpd = normalizedY * speed();
+		}
+	}
+	
+	private void attack() {
+		if (game.player().playerState() == PlayerState.normal) {
+			game.player().setHealth(game.player().health() - 1);
+			game.player().setPlayerState(PlayerState.hurt);
 		}
 	}
 	

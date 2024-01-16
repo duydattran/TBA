@@ -11,6 +11,7 @@ import fr.uge.adventure.item.Weapon;
 import fr.uge.adventure.main.Game;
 import fr.uge.adventure.object.Door;
 import fr.uge.adventure.object.GameObject;
+import fr.uge.adventure.renderer.Timer;
 import fr.uge.adventure.ulti.Direction;
 
 public class Player implements Element, Entity{
@@ -31,6 +32,10 @@ public class Player implements Element, Entity{
 	
 	private final double interactRange = 50;
 	private final double attackRange = 50;
+	
+	private boolean canTakeDamage = true;
+	private final Timer hurtTimer;
+	private static long hurtTime = 500;
 	
 	private Weapon weapon = null;
 	private Item item = null;
@@ -54,13 +59,17 @@ public class Player implements Element, Entity{
 		this.scrY = game.scrHeight() / 2;
 		this.direction = Direction.UP;
 		this.hitBox = new HitBox(15, 20, game.tileSize() - 25, game.tileSize() - 20);
+		
+		this.hurtTimer = new Timer();
 	}
 	
 	public void update() {
-		if (playerState == PlayerState.normal)
+		if (playerState != PlayerState.attack)
 			move();
-		if (playerState != PlayerState.attack && weapon != null)
+		if (playerState != PlayerState.attack && playerState != PlayerState.hurt && weapon != null)
 			attack();
+		if (playerState == PlayerState.hurt)
+			hurt();
 		hitBox.update(wrldX, wrldY);
 		game.coliCheck().checkTile(this);
 		game.coliCheck().checkEntity(this);
@@ -166,8 +175,17 @@ public class Player implements Element, Entity{
 			break;
 		default:
 			break;
+		}			
+	}
+	
+	private void hurt() {
+		if (hurtTimer.tick() > hurtTime * 10000000) {
+			hurtTimer.reset();
+			playerState = PlayerState.normal;
 		}
-			
+		else {
+			hurtTimer.update();
+		}
 	}
 	
 	public PlayerState playerState() {
