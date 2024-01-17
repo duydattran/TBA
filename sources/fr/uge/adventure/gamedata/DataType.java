@@ -5,4 +5,5 @@ public enum DataType {
 	Enemy,
 	Item,
 	Object,
+	Friend,
 }

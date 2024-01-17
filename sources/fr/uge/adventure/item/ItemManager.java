@@ -29,11 +29,14 @@ public class ItemManager {
 			case "KEY":
 				lstItem.add(new Key(itemData, game));
 				break;
-			case "SWORD":
+			case "SWORD", "STICK":
 				lstItem.add(new Weapon(itemData, game));
 				break;
-			case "BURGER":
+			case "BURGER", "PIZZA":
 				lstItem.add(new Food(itemData, game));
+				break;
+			case "CASH":
+				lstItem.add(new Cash(itemData, game));
 			default:
 				break;
 			}

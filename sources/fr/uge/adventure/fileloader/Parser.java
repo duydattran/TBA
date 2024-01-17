@@ -8,13 +8,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-
-import fr.uge.adventure.element.Element;
-import fr.uge.adventure.element.ElementType;
 import fr.uge.adventure.gamedata.ElementData;
 import fr.uge.adventure.gamedata.EnemyData;
+import fr.uge.adventure.gamedata.FriendData;
 import fr.uge.adventure.gamedata.GameData;
 import fr.uge.adventure.gamedata.ItemData;
 import fr.uge.adventure.gamedata.MapData;
@@ -25,7 +21,6 @@ import fr.uge.adventure.gamedata.Size;
 import fr.uge.adventure.gamedata.Zone;
 import fr.uge.adventure.main.Game;
 import fr.uge.adventure.tile.TileType;
-import fr.uge.adventure.ulti.Utilities;
 
 public class Parser {
 	private final Game game;
@@ -37,6 +32,7 @@ public class Parser {
 	private ArrayList<EnemyData> lstEnemyData;
 	private ArrayList<ItemData> lstItemData;
 	private ArrayList<ObjectData> lstObjData;
+	private ArrayList<FriendData> lstFriendData;
 
 	public Parser(String mapName, Game game) throws IOException {
 		var path = Path.of("maps", mapName + ".map");
@@ -47,6 +43,7 @@ public class Parser {
 		this.lstEnemyData = new ArrayList<EnemyData>();
 		this.lstItemData = new ArrayList<ItemData>();
 		this.lstObjData = new ArrayList<ObjectData>();
+		this.lstFriendData = new ArrayList<FriendData>();
 	}
 
 	private Result next(ArrayList<Result> tokens) {
@@ -72,11 +69,15 @@ public class Parser {
 	}
 
 	private void skipTo(ArrayList<Result> tokens, Token tokenToSkipTo) {
+		if (peek(tokens) == null)
+			return;
 		if (peek(tokens).token() == tokenToSkipTo)
 			return;
 		Result tok;
 		do {
 			tok = next(tokens);
+			if (tok == null)
+				break;
 		} while (!tok.isToken(tokenToSkipTo));
 		lineno++;
 	}
@@ -103,7 +104,7 @@ public class Parser {
 			parseSection(tokens);
 		}
 		
-		return new GameData(mapData, playerData, lstEnemyData, lstItemData, lstObjData);
+		return new GameData(mapData, playerData, lstEnemyData, lstItemData, lstObjData, lstFriendData);
 	}
 
 	private void parseSection(ArrayList<Result> tokens) {
@@ -152,6 +153,8 @@ public class Parser {
 			case Object:
 				lstObjData.add((ObjectData) eleData);
 				break;
+			case Friend:
+				lstFriendData.add((FriendData) eleData);
 			default:
 				break;
 			}
@@ -378,6 +381,7 @@ public class Parser {
 		HashMap<String, String> stringData = new HashMap<String, String>();
 		HashMap<String, Integer> intData = new HashMap<String, Integer>();
 		Position position = null; Zone zone = null;
+		HashMap<String, ArrayList<ItemData>>  lstTrade = new HashMap<String, ArrayList<ItemData>>(); 
 		
 
 		while (peek(tokens) != null && !peek(tokens).isToken(Token.LEFT_BRACKET)) {
@@ -404,6 +408,16 @@ public class Parser {
 			case "locked":
 				stringData.put(pointerToken.content(), parseAttributeString(pointerToken.content(), tokens));
 				break;
+			
+			case "trade":
+				lstTrade = parseTrade(tokens);
+				if (lstTrade != null)
+					for (var lsItemData : lstTrade.values()) {
+						for (var itemData : lsItemData) {
+							lstItemData.add(itemData);
+						}
+					}
+				break;
 
 			case "health":
 			case "damage":
@@ -424,7 +438,7 @@ public class Parser {
 				break;
 			}
 		}
-		return createElement(stringData, intData, position, zone);
+		return createElement(lstTrade, stringData, intData, position, zone);
 	}
 
 	private String parseAttributeString(String attribute, ArrayList<Result> tokens) {
@@ -460,11 +474,89 @@ public class Parser {
 		}
 		
 		if (attribute.equals("locked")) {
+			if (peek(tokens).token() != Token.IDENTIFIER) {
+				syntaxErrorHandler(Token.IDENTIFIER);
+				skipTo(tokens, Token.NEWLINE);
+				return null;
+			}
 			pointerToken = next(tokens);
 			nameData += " " + pointerToken.content();
 		}
 
 		return nameData;
+	}
+	
+	private HashMap<String, ArrayList<ItemData>> parseTrade(ArrayList<Result> tokens) {
+		Result pointerToken;
+		HashMap<String, ArrayList<ItemData>> lstTrade = new HashMap<String, ArrayList<ItemData>>();
+		String firstItem, secondItem, secondItemName;
+		
+		if (!skip(tokens, Token.COLON)) {
+			syntaxErrorHandler(Token.COLON);
+			skipTo(tokens, Token.NEWLINE);
+			return null;
+		}
+		
+		while (peek(tokens) != null && !peek(tokens).isToken(Token.LEFT_BRACKET)) {
+			firstItem = ""; 
+			secondItem = "";
+			secondItemName = "";
+			ArrayList<Map<String, String>> map = new ArrayList<Map<String, String>>();
+			if (peek(tokens).token() != Token.IDENTIFIER) {
+				syntaxErrorHandler(Token.IDENTIFIER);
+				skipTo(tokens, Token.NEWLINE);
+				return null;
+			}
+			pointerToken = next(tokens);
+			firstItem = pointerToken.content();
+			System.out.println(firstItem);
+			
+
+			if (peek(tokens).token() != Token.IDENTIFIER) {
+				syntaxErrorHandler(Token.IDENTIFIER);
+				skipTo(tokens, Token.NEWLINE);
+				return null;
+			}
+			pointerToken = next(tokens);
+			secondItem = pointerToken.content();
+			System.out.println(secondItem);
+			
+			System.out.println(peek(tokens));
+			
+			if (peek(tokens) == null) {
+				if (!lstTrade.containsKey(firstItem)) {
+					var lstItemData = new ArrayList<ItemData>();
+					lstItemData.add(new ItemData(secondItemName, secondItem));
+					lstTrade.put(firstItem, lstItemData);
+				}
+				else {
+					lstTrade.get(firstItem).add(new ItemData(secondItemName, secondItem));
+				}
+				break;
+			}
+			
+			
+			if (peek(tokens).token() != Token.IDENTIFIER && peek(tokens).token() != Token.COMMA && peek(tokens).token() != Token.NEWLINE) {
+				syntaxErrorHandler(Token.IDENTIFIER);
+				skipTo(tokens, Token.NEWLINE);
+				return null;
+			}
+			
+			pointerToken = next(tokens);
+			secondItemName = pointerToken.content();
+			if (!lstTrade.containsKey(firstItem)) {
+				var lstItemData = new ArrayList<ItemData>();
+				lstItemData.add(new ItemData(secondItemName, secondItem));
+				lstTrade.put(firstItem, lstItemData);
+			}
+			else {
+				lstTrade.get(firstItem).add(new ItemData(secondItemName, secondItem));
+			}
+			
+			skip(tokens, Token.COMMA);
+		}
+		
+		return lstTrade;
 	}
 
 	private Integer parseAttributeNumber(String attribute, ArrayList<Result> tokens) {
@@ -622,7 +714,7 @@ public class Parser {
 		return new Zone(x, y, col, row);
 	}
 
-	private ElementData createElement(HashMap<String, String> stringData, HashMap<String, Integer> intData,
+	private ElementData createElement(HashMap<String, ArrayList<ItemData>>  lstTrade, HashMap<String, String> stringData, HashMap<String, Integer> intData,
 			Position position, Zone zone) {
 		String player = stringData.get("player"), skin = stringData.get("skin"), name = stringData.get("name"),
 				behavior = stringData.get("behavior"), kind = stringData.get("kind");
@@ -639,6 +731,8 @@ public class Parser {
 			switch(kind) {
 			case "enemy":
 				return new EnemyData(name, skin, position, zone, damage, behavior);
+			case "friend":
+				return new FriendData(name, skin, position, zone, damage, behavior, lstTrade);
 			case "item":
 				return new ItemData(name, skin, position, stringData, intData);
 			case "obstacle":

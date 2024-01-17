@@ -25,6 +25,12 @@ public class Food implements Element, Item{
 		this.hitBox = new HitBox(15, 20, game.tileSize() - 25, game.tileSize() - 20);
 		this.hitBox.update(wrldX, wrldY);
 	}
+	
+	public Food(String name, String skin) {
+		this.name = name;
+		this.skin = skin;
+		this.hitBox = null;
+	}
 
 	@Override
 	public ItemType itemType() {

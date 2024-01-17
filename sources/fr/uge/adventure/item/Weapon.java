@@ -62,4 +62,8 @@ public class Weapon implements Element, Item{
 	public HitBox hitBox() {
 		return this.hitBox;
 	}
+
+	public double damage() {
+		return damage;
+	}
 }

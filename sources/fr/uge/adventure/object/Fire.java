@@ -5,23 +5,22 @@ import fr.uge.adventure.element.Element;
 import fr.uge.adventure.element.ElementType;
 import fr.uge.adventure.entity.Enemy;
 import fr.uge.adventure.entity.Entity;
+import fr.uge.adventure.entity.PlayerState;
 import fr.uge.adventure.gamedata.ObjectData;
 import fr.uge.adventure.item.Item;
 import fr.uge.adventure.item.ItemType;
 import fr.uge.adventure.main.Game;
 import fr.uge.adventure.main.GameState;
 
-public class Door implements Element, GameObject{
+public class Fire implements Element, GameObject{
 	private double wrldX;
 	private double wrldY;
 	private final Game game;
 	private final String name;
 	private final String skin;
 	private final HitBox hitBox;
-	private final String OpenWith;
-	private final String nameOpen;
 	
-	public Door(ObjectData data, Game game) {
+	public Fire(ObjectData data, Game game) {
 		this.game = game;
 		this.name = data.name();
 		this.skin = data.skin();
@@ -29,46 +28,25 @@ public class Door implements Element, GameObject{
 		this.wrldY = (double) (data.pos().y() * game.tileSize());
 		this.hitBox = new HitBox(0, 0, game.tileSize(), game.tileSize() + 15);
 		this.hitBox.update(wrldX, wrldY);
-		String[] strData = data.strData().get("locked").split(" ");
-		this.OpenWith = strData[0];
-		this.nameOpen = strData[1];
 	}
 	
 	@Override
 	public void event(Entity entity, boolean player) {
-		Item item = entity.item();
-		if (item != null && item.itemType() == ItemType.key &&
-			item.name().equals(nameOpen)) {
-			game.lstObject().remove(this);
-			entity.setItem(null);
-			entity.inventory().remove(item);
-			game.uiMng().setName("");
-			game.uiMng().setContentTextBox("You used " + item.itemType() + " " + item.name());
-			game.setGameState(GameState.dialogueScr);
+		if (game.player().playerState() != PlayerState.hurt) {
+			game.player().setPlayerState(PlayerState.hurt);
+			game.player().setHealth(game.player().health() - 1);
+			game.camera().setShakeIntensity(4.5);
 		}
-		else {
-			game.uiMng().setName("");
-			game.uiMng().setContentTextBox(OpenWith + " " + nameOpen + " required");
-			game.setGameState(GameState.dialogueScr);
-		}
-	}
-	
-	public String openWith() {
-		return OpenWith;
-	}
-
-	public String nameOpen() {
-		return nameOpen;
 	}
 	
 	@Override
 	public boolean isCollidable() {
-		return true;
+		return false;
 	}
 	
 	@Override
 	public GameObjectType objType() {
-		return GameObjectType.door;
+		return GameObjectType.fire;
 	}
 
 	@Override
@@ -99,5 +77,10 @@ public class Door implements Element, GameObject{
 	@Override
 	public ElementType type() {
 		return ElementType.GameObj;
+	}
+
+	@Override
+	public String openWith() {
+		return null;
 	}
 }

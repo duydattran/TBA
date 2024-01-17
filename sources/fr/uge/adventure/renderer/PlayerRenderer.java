@@ -43,8 +43,6 @@ public class PlayerRenderer {
 	}
 	
 	public void update() {
-		animatePlayer();
-		
 		if (player.playerState() == PlayerState.attack) {
 			weaponAnimation();
 		}
@@ -52,9 +50,10 @@ public class PlayerRenderer {
 		if (player.playerState() == PlayerState.hurt) {
 			blinkTimer.update();
 		}
+		
+		animatePlayer();
+		
 		updateWeaponDirection();
-		if (player.weapon() != null && weaponTexture.size() == 0)
-			loadWeaponTexture(gameRenderer.ogSprSize());
 	}
 	
 	private void weaponAnimation() {
@@ -136,28 +135,30 @@ public class PlayerRenderer {
 		case RIGHT:
 			dirX = 1;
 			offSetX = 35;
-			offSetY = 20;
+			offSetY = 10;
 			break;
 		case LEFT:
 			dirX = -1;
 			offSetX = 35;
-			offSetY = 20;
+			offSetY = 10;
 			break;
 		case UP:
 			dirY = -1;
-			offSetX = 20;
+			offSetX = 10;
 			offSetY = 35;
 			break;
 		case DOWN:
 			dirY = 1;
-			offSetX = 20;
+			offSetX = 10;
 			offSetY = 35;
 			break;
 		}
 		
-		if (weaponTexture.size() != 0)
-			g2.drawImage(Utilities.rotateImage(weaponTexture.get(0), weaponAngle), null, (int) (player.wrldX() - cam.camX() + dirX * (offSetX - weaponX)), 
-													(int) (player.wrldY() - cam.camY() + dirY * (offSetY - weaponY)));		
+		if (player.weapon() != null) {
+			BufferedImage texture = gameRenderer.texture().lstItemTextureScaled().get(player.weapon().skin()).get(0);
+			g2.drawImage(Utilities.rotateImage(texture, weaponAngle), null, (int) (player.wrldX() - cam.camX() + dirX * (offSetX - weaponX)), 
+					(int) (player.wrldY() - cam.camY() + dirY * (offSetY - weaponY)));
+		}
 	}
 	
 	private void loadPlayerTexture(double ogSprSize) {
@@ -179,23 +180,6 @@ public class PlayerRenderer {
 		}
 	}
 	
-	private void loadWeaponTexture(double ogSprSize) {
-		BufferedImage sprite = null;
-		String pngName = player.weapon().skin().toLowerCase() + ".png";
-		System.out.println(pngName);
-		sprite = Utilities.loadImage("/fr/images/object/", pngName);
-		var textureList = new ArrayList<BufferedImage>();
-
-		for (int row = 0; row < 3; row++) {
-			for (int col = 0; col < 1; col++) {
-				BufferedImage sprFrm = Utilities.getSpriteFrame(sprite, ogSprSize, col, row);
-				BufferedImage sclFrm = Utilities.scaleImage(sprFrm, gameRenderer.scale());
-				textureList.add(sclFrm);
-			}
-		}
-		
-		setWeaponTexture(textureList);
-	}
 	
 	private void animatePlayer() {
 		animTimer.update();

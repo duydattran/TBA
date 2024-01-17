@@ -4,4 +4,5 @@ public enum GameState {
 	inventoryScr,
 	dialogueScr,
 	running,
+	tradingScr,
 }

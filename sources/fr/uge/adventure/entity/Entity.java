@@ -19,10 +19,11 @@ public interface Entity {
 	void setYSpd(double ySpd);
 	double speed();
 	boolean collision();
-	Direction direction();
 	HitBox hitBox();
 	Item item();
 	void setItem(Item item);
 	ArrayList<Item> inventory();
 	double attackRange();
+	Direction direction();
+	EntityType entityType();
 }

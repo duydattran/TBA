@@ -2,6 +2,9 @@ package fr.uge.adventure.entity;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -9,13 +12,18 @@ import fr.uge.adventure.collision.HitBox;
 import fr.uge.adventure.element.Element;
 import fr.uge.adventure.element.ElementType;
 import fr.uge.adventure.gamedata.EnemyData;
+import fr.uge.adventure.gamedata.FriendData;
+import fr.uge.adventure.gamedata.ItemData;
 import fr.uge.adventure.gamedata.Zone;
+import fr.uge.adventure.item.Food;
 import fr.uge.adventure.item.Item;
+import fr.uge.adventure.item.Key;
 import fr.uge.adventure.main.Game;
+import fr.uge.adventure.main.GameState;
 import fr.uge.adventure.renderer.Timer;
 import fr.uge.adventure.ulti.Direction;
 
-public class Enemy implements Element, Entity{
+public class Friend implements Element, Entity{
 	private double wrldX; private double wrldY;
 	private double scrX; private double scrY;
 	private double speed; private double xSpd; private double ySpd;
@@ -33,49 +41,37 @@ public class Enemy implements Element, Entity{
 	private final Game game;
 	private final HitBox hitBox;
 	
-	private EnemyState enemyState = EnemyState.normal;
+	private final HashMap<String, ArrayList<ItemData>> lstTrade;
+	private final ArrayList<Item> inventory;
 	
-	private final Timer hurtTimer;
-	private static long hurtTime = 2000000000;
-	
-	public Enemy(EnemyData enemyData, Game game) {
-		Objects.requireNonNull(enemyData);
+	public Friend(FriendData friendData, Game game) {
+		Objects.requireNonNull(friendData);
 		Objects.requireNonNull(game);
 		this.game = game;
-		this.setHealth(enemyData.health());
+		this.setHealth(friendData.health());
 		this.speed = 2;
-		this.name = enemyData.name();
-		this.skin = enemyData.skin();
-		this.setHealth(enemyData.health());
+		this.name = friendData.name();
+		this.skin = friendData.skin();
+		this.setHealth(friendData.health());
+		this.lstTrade = friendData.lstTrade();
+		this.inventory = new ArrayList<Item>();
+		loadInventory();
 		
-		this.wrldX = (double) enemyData.pos().x() * game.tileSize();
-		this.wrldY = (double) enemyData.pos().y() * game.tileSize();
+		this.wrldX = (double) friendData.pos().x() * game.tileSize();
+		this.wrldY = (double) friendData.pos().y() * game.tileSize();
 		this.direction = Direction.UP;
-		this.zone = enemyData.zone();
+		this.zone = friendData.zone();
 		this.hitBox = new HitBox(15, 20, game.tileSize() - 25, game.tileSize() - 20);
-		
-		this.hurtTimer = new Timer();
 	}
 	
-	public void update() {
-		if (enemyState == EnemyState.normal || enemyState == EnemyState.chase)
-			move();
-		
-		if (enemyState == EnemyState.hurt)
-			hurt();
-		
-		if (game.coliCheck().checkPlayer(this))
-			attack();
-		
-		if (detectPlayerInZone()) {
-			enemyState = EnemyState.chase;
-		}
-		else
-			enemyState = EnemyState.normal;
+	public void update() {		
+//		move();
 		
 		hitBox.update(wrldX, wrldY);
 		
 		game.coliCheck().checkTile(this);
+		
+		game.coliCheck().checkPlayer(this);
 		
 		if (game.tileSize() * zone.x() < wrldX + xSpd && 
 			wrldX + xSpd < game.tileSize() * (zone.x() + zone.width()))
@@ -83,6 +79,22 @@ public class Enemy implements Element, Entity{
 		if (game.tileSize() * (zone.y() - 1) < wrldY + ySpd && 
 			wrldY + ySpd < game.tileSize() * (zone.y() + zone.height() + 1))
 			wrldY += ySpd;
+	}
+	
+	private void loadInventory() {
+		for (var lstItem : lstTrade.values()) {
+			for (var item : lstItem) {
+				switch (item.skin()) {
+				case "KEY":
+					inventory.add(new Key(item.name(), item.skin()));
+					break;
+				case "PIZZA":
+					inventory.add(new Food(item.name(), item.skin()));
+					break;
+				}
+				
+			}
+		}
 	}
 	
 	private void move() {		
@@ -93,22 +105,15 @@ public class Enemy implements Element, Entity{
 		int index;
 		Random random = new Random();
 		
-		if (enemyState == EnemyState.normal) {
-			if (step == 0) {
-				step = random.nextInt(100, 200);
-		        index = random.nextInt(3);
-		        xDir = dir[index];
-		        index = random.nextInt(3);
-		        yDir = dir[index];
-			}
-			else {
-				step--;
-			}
+		if (step == 0) {
+			step = random.nextInt(100, 200);
+	        index = random.nextInt(3);
+	        xDir = dir[index];
+	        index = random.nextInt(3);
+	        yDir = dir[index];
 		}
-		else if (enemyState == EnemyState.chase) {
-			xDir = game.player().wrldX() - wrldX;
-	        yDir = game.player().wrldY() - wrldY;
-	        
+		else {
+			step--;
 		}
 		
 		if (xDir > 0) {
@@ -134,35 +139,44 @@ public class Enemy implements Element, Entity{
 		}
 	}
 	
-	private boolean detectPlayerInZone() {
-		if (game.tileSize() * zone.x() < game.player().wrldX() && 
-			game.player().wrldX() < game.tileSize() * (zone.x() + zone.width()) &&
-			game.tileSize() * (zone.y() - 1) < game.player().wrldY() && 
-			game.player().wrldY() < game.tileSize() * (zone.y() + zone.height() + 1))
-			return true;
-		return false;
-	}
-	
-	private void attack() {
-		if (game.player().playerState() == PlayerState.normal) {
-			game.player().setHealth(game.player().health() - 1);
-			game.player().setPlayerState(PlayerState.hurt);
-			game.camera().setShakeIntensity(4.5);
-		}
-	}
-	
-	private void hurt() {
-		if (hurtTimer.tick() > hurtTime) {
-			hurtTimer.reset();
-			enemyState = EnemyState.normal;
-		}
-		else {
-			hurtTimer.update();
-		}
-	}
-	
-	public void knockBack(double distance) {
+	public void trade() {
+		Item item1, item2;
+		item1 = game.uiMng().item1();
+		item2 = game.uiMng().item2();
 		
+		var lstItem = lstTrade.getOrDefault(item2.skin(), null);
+		System.out.println(item2.skin());
+		if (lstItem != null) {
+			for (var item : lstItem) {
+				if (item.skin().equals(item1.skin())) {
+					game.player().inventory().add(item1);
+					game.player().inventory().remove(item2);
+					inventory.remove(item1);
+					inventory.add(item2);
+					game.uiMng().setName(name);
+					game.uiMng().setContentTextBox("Thank you!");
+					game.setGameState(GameState.dialogueScr);	
+				}
+			}
+		}else {
+			game.uiMng().setName(name);
+			game.uiMng().setContentTextBox("I don't want this!");
+			game.setGameState(GameState.dialogueScr);	
+		}
+	}
+	
+	public void event() {
+		if (game.player().inventory().size() == 0) {
+			game.uiMng().setName(name);
+			game.uiMng().setContentTextBox("You dont have anything to trade. Go around find treasure and come back");
+			game.setGameState(GameState.dialogueScr);
+			return;
+		}
+		game.uiMng().setName(name);
+		game.uiMng().setContentTextBox("Do you want to trade");
+		game.setGameState(GameState.dialogueScr);
+		game.uiMng().setOption(new ArrayList<String>(List.of("yes", "no")));
+		game.uiMng().setChooseOption(true);
 	}
 	
 	@Override
@@ -203,6 +217,10 @@ public class Enemy implements Element, Entity{
 	@Override
 	public Direction direction() {
 		return this.direction;
+	}
+	
+	public void setDirection(Direction dir) {
+		this.direction = dir;
 	}
 	
 	public double xSpd() {
@@ -269,7 +287,7 @@ public class Enemy implements Element, Entity{
 	@Override
 	public ArrayList<Item> inventory() {
 		// TODO Auto-generated method stub
-		return null;
+		return inventory;
 	}
 
 	@Override
@@ -278,20 +296,12 @@ public class Enemy implements Element, Entity{
 		return 0;
 	}
 
-	public EnemyState enemyState() {
-		return enemyState;
-	}
-
-	public void setEnemyState(EnemyState enemyState) {
-		this.enemyState = enemyState;
-	}
-
 	public Zone zone() {
 		return zone;
 	}
 	
 	@Override
 	public EntityType entityType() {
-		return EntityType.enemy;
+		return EntityType.friend;
 	}
 }

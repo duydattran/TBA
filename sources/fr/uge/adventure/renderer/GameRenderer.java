@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import fr.uge.adventure.camera.Camera;
 import fr.uge.adventure.element.Element;
@@ -25,6 +27,7 @@ public class GameRenderer {
 	private final EnemyRenderer eRenderer;
 	private final ItemRenderer iRenderer; 
 	private final ObjectRenderer oRenderer; 
+	private final FriendRenderer fRenderer;
 	private final UI ui;
 	
 	private final Camera cam;
@@ -45,6 +48,7 @@ public class GameRenderer {
 		this.eRenderer = new EnemyRenderer(game.lstEnemy(), this);
 		this.iRenderer = new ItemRenderer(game.lstItem(), this);
 		this.oRenderer = new ObjectRenderer(game.lstObject(), this);
+		this.fRenderer = new FriendRenderer(game.lstFriend(), this);
 		this.ui = new UI(game, this);
 		this.cam = game.camera();
 	}
@@ -54,6 +58,7 @@ public class GameRenderer {
 		eRenderer.update();
 		iRenderer.update();
 		oRenderer.update();
+		fRenderer.update();
 		ui.update();
 	}
 	
@@ -67,19 +72,26 @@ public class GameRenderer {
 			pRenderer.render(bufferGraphics);
 			eRenderer.render(bufferGraphics);
 			oRenderer.render(bufferGraphics);
+			fRenderer.render(bufferGraphics);
 //			game.player().hitBox().draw(bufferGraphics, cam.camX(), cam.camY());
 			
 			//UI
 			if (game.gameState() == GameState.inventoryScr)
 				ui.inventoryGrid(bufferGraphics);
-			if (game.gameState() == GameState.inventoryScr || game.gameState() == GameState.running) {
+			else if (game.gameState() == GameState.inventoryScr || game.gameState() == GameState.running) {
 				ui.healthBar(bufferGraphics);
 				ui.equipment(bufferGraphics);
 				ui.weapon(bufferGraphics);
+				ui.cash(bufferGraphics);
 			}
-			if (game.gameState() == GameState.dialogueScr) {
+			else if (game.gameState() == GameState.dialogueScr) {
 				ui.textBox(bufferGraphics);
-				ui.textBoxString(bufferGraphics, "hello", game.uiMng().contentTextBox());
+				ui.textBoxString(bufferGraphics, game.uiMng().name(), game.uiMng().contentTextBox());
+				if (game.uiMng().chooseOption())
+					ui.option(bufferGraphics, game.uiMng().name(), game.uiMng().option());
+			}
+			else if (game.gameState() == GameState.tradingScr) {
+				ui.inventoryGridTrading(bufferGraphics);
 			}
 			
 			//when all the elements are drawn, draw the buffer image

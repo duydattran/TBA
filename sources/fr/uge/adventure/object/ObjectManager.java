@@ -30,6 +30,9 @@ public class ObjectManager {
 			case "DOOR":
 				lstObject.add(new Door(itemData, game));
 				break;
+			case "FIRE":
+				lstObject.add(new Fire(itemData, game));
+				break;
 			default:
 				break;
 			}

@@ -38,6 +38,7 @@ public class Texture {
 		loadEnemyTexture();
 		loadObjectTexture();
 		loadUiTexture("love", heartUiScale);
+		loadUiTexture("cash", heartUiScale);
 	}
 	
 	private void loadItemTexture() {
@@ -54,6 +55,8 @@ public class Texture {
 			for (int row = 0; row < 3; row++) {
 				for (int col = 0; col < 1; col++) {
 					BufferedImage sprFrm = Utilities.getSpriteFrame(sprite, ogSprSize, col, row); //sprite frame
+					if (item.skin().equals("STICK"))
+						sprFrm = Utilities.rotateImage(sprFrm, -45);
 					BufferedImage sclFrm = Utilities.scaleImage(sprFrm, scale); //scaled frame
 					BufferedImage sclFrmUi = Utilities.scaleImage(sprFrm, cellSize / (2 * ogSprSize)); //scaled frame
 					textureList.add(sprFrm);

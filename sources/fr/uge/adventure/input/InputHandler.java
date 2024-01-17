@@ -62,7 +62,7 @@ public class InputHandler {
 			exitPressed = true;
 			break;
 		case I:
-			game.setGameState(game.gameState() == GameState.inventoryScr ? GameState.running : GameState.inventoryScr);
+			game.setGameState(game.gameState() == GameState.inventoryScr || game.gameState() == GameState.tradingScr  ? GameState.running : GameState.inventoryScr);
 			break;
 		default:
 			break;

@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.Objects;
+import java.util.Random;
 
 import fr.uge.adventure.entity.Entity;
 import fr.uge.adventure.item.Item;
 import fr.uge.adventure.main.Game;
+import fr.uge.adventure.renderer.Timer;
 
 public class Camera {
 	private Entity target; //the target on which the camera will look at
@@ -17,6 +19,10 @@ public class Camera {
 	private int camStartCol; private int camEndCol;
 	private int camStartRow; private int camEndRow;
 	private final double camWidth; private final double camHeight;
+	
+	private final Timer shakeTimer;
+	private double shakeIntensity = 0;
+	private static long shakeTime = 300;
 	
 	public Camera(Entity target, double camWidth, double camHeight, Game game) {
 		Objects.requireNonNull(target);
@@ -38,11 +44,21 @@ public class Camera {
 		this.game = game;
 		this.camWidth = camWidth;
 		this.camHeight = camHeight;
+		this.shakeTimer = new Timer();
 	}
 	
 	public void update() {
 		camRangeCheck();
 		camPosUpdate();
+		
+		if (shakeIntensity != 0 && shakeTimer.tick() < shakeTime * 10000000) {
+			applyShake(shakeIntensity);
+			shakeTimer.update();
+		}
+		else {
+			shakeIntensity = 0;
+			shakeTimer.reset();
+		}
 	}
 	
 	private void camPosUpdate() {
@@ -82,6 +98,15 @@ public class Camera {
 		if (camEndRow > game.tileMap().row())
 			camEndRow = game.tileMap().row();
 	}
+	
+	public void applyShake(double intensity) {
+        // Implement screen shake logic
+        Random rand = new Random();
+        double offSetX = rand.nextDouble() * intensity - intensity / 2.0;
+        double offSetY = rand.nextDouble() * intensity - intensity / 2.0;
+        camX += offSetX;
+        camY += offSetY;
+    }
 	
 	public boolean isEntityInRange(Entity entity) {
 		if (camX < entity.wrldX() && entity.wrldX() < camX + camWidth &&
@@ -164,5 +189,9 @@ public class Camera {
 	
 	public double camHeight() {
 		return this.camHeight;
+	}
+	
+	public void setShakeIntensity(double intensity) {
+		this.shakeIntensity = intensity;
 	}
 }

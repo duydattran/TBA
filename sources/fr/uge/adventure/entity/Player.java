@@ -30,17 +30,17 @@ public class Player implements Element, Entity{
 	
 	private PlayerState playerState;
 	
-	private final double interactRange = 50;
 	private final double attackRange = 50;
 	
-	private boolean canTakeDamage = true;
 	private final Timer hurtTimer;
-	private static long hurtTime = 500;
+	private static long hurtTime = 300;
 	
 	private Weapon weapon = null;
 	private Item item = null;
 	
 	private final ArrayList<Item> inventory;
+	private Friend trader;
+	private int cash = 0;
 	
 	public Player(Game game) {
 		Objects.requireNonNull(game);
@@ -64,16 +64,19 @@ public class Player implements Element, Entity{
 	}
 	
 	public void update() {
-		if (playerState != PlayerState.attack)
+		if (playerState == PlayerState.normal || playerState == PlayerState.hurt)
 			move();
 		if (playerState != PlayerState.attack && playerState != PlayerState.hurt && weapon != null)
 			attack();
 		if (playerState == PlayerState.hurt)
 			hurt();
+		
 		hitBox.update(wrldX, wrldY);
 		game.coliCheck().checkTile(this);
 		game.coliCheck().checkEntity(this);
+		
 		interact();
+		interactFriend();
 		wrldX += xSpd;
 		wrldY += ySpd;
 	}
@@ -115,11 +118,30 @@ public class Player implements Element, Entity{
 	public void attack() {
 		if (game.input().spaceTouch) {
 			game.input().spaceTouch = false;
-			System.out.println("attack");
 			playerState = PlayerState.attack;
 			Entity entity = game.coliCheck().hitDetectEnemy(this);
-			if (entity != null) {
-				game.lstEnemy().remove(entity);
+			if (entity != null && entity.entityType() == EntityType.enemy) {
+				Enemy enemy = (Enemy) entity;
+				enemy.setEnemyState(EnemyState.hurt);
+				enemy.setHealth(enemy.health() - weapon.damage());
+				if (enemy.health() < 0)
+					game.lstEnemy().remove(enemy);
+				switch (direction) {
+				case UP:
+					enemy.setYSpd(-100);
+					break;
+				case DOWN:
+					enemy.setYSpd(100);
+					break;
+				case LEFT:
+					enemy.setXSpd(-100);
+					break;
+				case RIGHT:
+					enemy.setXSpd(100);
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}
@@ -128,20 +150,43 @@ public class Player implements Element, Entity{
 		Item item = game.coliCheck().checkItem(this);
 		if (item != null) {
 			inventory.add(item);
+			if (item.skin().equals("CASH"))
+				cash++;
 		}
 		return item;
 	}
 	
 	public void interact() {
 		GameObject object = game.coliCheck().checkObject(this);
-		if (object == null)
-			return;
-		switch(object.objType()) {
-		case door:
+		
+		if (object != null) {
 			object.event(this, true);
-			break;
-		default:
-			break;
+		}
+	}
+	
+	public void interactFriend() {
+		Entity entity = game.coliCheck().checkFriend(this);
+
+		if (entity != null && entity.entityType() == EntityType.friend) {
+			System.out.println(entity.entityType());
+			System.out.println("hell");
+			Friend friend = (Friend) entity;
+			trader = friend;
+			friend.event();
+			switch(direction) {
+			case UP:
+				friend.setDirection(Direction.DOWN);
+				break;
+			case DOWN:
+				friend.setDirection(Direction.UP);
+				break;
+			case RIGHT:
+				friend.setDirection(Direction.LEFT);
+				break;
+			case LEFT:
+				friend.setDirection(Direction.RIGHT);
+				break;
+			}
 		}
 	}
 	
@@ -307,5 +352,26 @@ public class Player implements Element, Entity{
 
 	public double attackRange() {
 		return attackRange;
+	}
+
+	@Override
+	public EntityType entityType() {
+		return EntityType.player;
+	}
+
+	public int cash() {
+		return cash;
+	}
+
+	public void setCash(int cash) {
+		this.cash = cash;
+	}
+
+	public Friend trader() {
+		return trader;
+	}
+
+	public void setTrader(Friend trader) {
+		this.trader = trader;
 	}
 }

@@ -7,6 +7,8 @@ import fr.uge.adventure.camera.Camera;
 import fr.uge.adventure.collision.CollisionChecker;
 import fr.uge.adventure.entity.Enemy;
 import fr.uge.adventure.entity.EnemyManager;
+import fr.uge.adventure.entity.Friend;
+import fr.uge.adventure.entity.FriendManager;
 import fr.uge.adventure.entity.Player;
 import fr.uge.adventure.fileloader.Parser;
 import fr.uge.adventure.gamedata.GameData;
@@ -30,8 +32,8 @@ public class Game {
 								//to calculate the waiting time is not 100% accurate
 
 	//SCREEN SET UP
-	private final int maxScrCol = 64; //32
-	private final int maxScrRow = 36; //18
+	private final int maxScrCol = 32; //32
+	private final int maxScrRow = 18; //18
 	private final double scrWidth;
 	private final double scrHeight;
 	private final ApplicationContext context;
@@ -42,6 +44,7 @@ public class Game {
 	private final Player player;
 	private final TileMap tileMap;
 	private final ArrayList<Enemy> lstEnemy;
+	private final ArrayList<Friend> lstFriend;
 	private final ArrayList<Item> lstItem;
 	private final ArrayList<GameObject> lstObject;
 
@@ -49,6 +52,7 @@ public class Game {
 	private final EnemyManager enemyMng;
 	private final ItemManager itemMng;
 	private final ObjectManager objMng;
+	private final FriendManager frMng;
 
 	private final Camera cam;
 
@@ -59,8 +63,6 @@ public class Game {
 	private final GameRenderer renderer;
 	
 	private GameState gameState;
-
-	private boolean running = true;
 
 	//DEBUG
 	private int drawCount = 0;
@@ -79,9 +81,10 @@ public class Game {
 
 		this.player = new Player(this);
 		this.tileMap = new TileMap(data.map());
-		this.lstEnemy = new ArrayList<>();
-		this.lstItem = new ArrayList<>();
-		this.lstObject = new ArrayList<>();
+		this.lstEnemy = new ArrayList<Enemy>();
+		this.lstFriend = new ArrayList<Friend>();
+		this.lstItem = new ArrayList<Item>();
+		this.lstObject = new ArrayList<GameObject>();
 
 		this.input = new InputHandler(this);
 		this.coliCheck = new CollisionChecker(this);
@@ -91,6 +94,7 @@ public class Game {
 		this.enemyMng = new EnemyManager(this);
 		this.itemMng = new ItemManager(this);
 		this.objMng = new ObjectManager(this);
+		this.frMng = new FriendManager(this);
 
 		this.cam = new Camera(player, scrWidth, scrHeight, this);
 		this.renderer = new GameRenderer(this);
@@ -117,6 +121,7 @@ public class Game {
 		tileMng.update();
 		itemMng.update();
 		objMng.update();
+		frMng.update();
 
 		Item item;
 		if ((item = player.pickUpItem())!= null) {
@@ -245,5 +250,9 @@ public class Game {
 
 	public void setGameState(GameState gameState) {
 		this.gameState = gameState;
+	}
+
+	public ArrayList<Friend> lstFriend() {
+		return lstFriend;
 	}
 }

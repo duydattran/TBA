@@ -8,7 +8,7 @@ import fr.uge.adventure.element.ElementType;
 import fr.uge.adventure.gamedata.ItemData;
 import fr.uge.adventure.main.Game;
 
-public class Key implements Element, Item{
+public class Cash implements Element, Item{
 	private final String name;
 	private final String skin;
 	
@@ -16,7 +16,7 @@ public class Key implements Element, Item{
 	private double wrldY;
 	private final HitBox hitBox;
 	
-	public Key(ItemData data, Game game) {
+	public Cash(ItemData data, Game game) {
 		this.name = data.name();
 		this.skin = data.skin();
 		this.wrldX = (double) (data.pos().x() * game.tileSize());
@@ -25,7 +25,7 @@ public class Key implements Element, Item{
 		this.hitBox.update(wrldX, wrldY);
 	}
 	
-	public Key(String name, String skin) {
+	public Cash(String name, String skin) {
 		this.name = name;
 		this.skin = skin;
 		this.hitBox = null;

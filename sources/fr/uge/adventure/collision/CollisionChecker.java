@@ -106,6 +106,30 @@ public class CollisionChecker {
 				}
 			}
 		}
+		
+		return null;
+	}
+	
+	public Entity checkFriend(Entity entity) {
+		for (var friend : game.lstFriend()) {
+			if (friend.hitBox() == null) 
+				continue;
+			switch(game.player().direction()) {
+			case UP:
+			case DOWN:
+				if (entity.hitBox().intersectInDistance(friend.hitBox(), 0, entity.ySpd())) {
+					entity.setYSpd(0);
+					return friend;
+				}
+			case LEFT:
+			case RIGHT:
+				if (entity.hitBox().intersectInDistance(friend.hitBox(), entity.xSpd(), 0)) {
+					entity.setXSpd(0);
+					return friend;
+				}
+			}
+		}
+		
 		return null;
 	}
 	
