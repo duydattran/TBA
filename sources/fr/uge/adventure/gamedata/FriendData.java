@@ -12,7 +12,6 @@ public record FriendData(String name, String skin, Position pos, Zone zone, doub
 		Objects.requireNonNull(pos);
 		Objects.requireNonNull(zone);
 		Objects.requireNonNull(behavior);
-		Objects.requireNonNull(lstTrade);
 	}
 
 	@Override

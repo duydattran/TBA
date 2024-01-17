@@ -31,6 +31,7 @@ public class Player implements Element, Entity{
 	private PlayerState playerState;
 	
 	private final double attackRange = 50;
+	private final double interactRange = 50;
 	
 	private final Timer hurtTimer;
 	private static long hurtTime = 300;
@@ -66,17 +67,20 @@ public class Player implements Element, Entity{
 	public void update() {
 		if (playerState == PlayerState.normal || playerState == PlayerState.hurt)
 			move();
+		hitBox.update(wrldX, wrldY);
 		if (playerState != PlayerState.attack && playerState != PlayerState.hurt && weapon != null)
 			attack();
 		if (playerState == PlayerState.hurt)
 			hurt();
+		if (game.input().spaceTouch) {
+			game.input().spaceTouch = false;
+			interactFriend();
+		}
+		interact();
 		
-		hitBox.update(wrldX, wrldY);
 		game.coliCheck().checkTile(this);
 		game.coliCheck().checkEntity(this);
 		
-		interact();
-		interactFriend();
 		wrldX += xSpd;
 		wrldY += ySpd;
 	}
@@ -165,7 +169,7 @@ public class Player implements Element, Entity{
 	}
 	
 	public void interactFriend() {
-		Entity entity = game.coliCheck().checkFriend(this);
+		Entity entity = game.coliCheck().checkFriend();
 
 		if (entity != null && entity.entityType() == EntityType.friend) {
 			System.out.println(entity.entityType());
@@ -206,7 +210,10 @@ public class Player implements Element, Entity{
 			
 		switch(item.itemType()) {
 		case weapon:
-			setWeapon((Weapon) item);
+			if (this.weapon != item)
+				setWeapon((Weapon) item);
+			else 
+				setWeapon(null);
 			break;
 		case food:
 			inventory.remove(item);
@@ -214,9 +221,9 @@ public class Player implements Element, Entity{
 			break;
 		case key:
 			if (this.item != item)
-				this.setItem(item);
+				setItem(item);
 			else 
-				this.setItem(null);
+				setItem(null);
 			break;
 		default:
 			break;
@@ -373,5 +380,9 @@ public class Player implements Element, Entity{
 
 	public void setTrader(Friend trader) {
 		this.trader = trader;
+	}
+
+	public double interactRange() {
+		return interactRange;
 	}
 }

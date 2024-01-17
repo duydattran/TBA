@@ -32,7 +32,7 @@ public class ItemManager {
 			case "SWORD", "STICK":
 				lstItem.add(new Weapon(itemData, game));
 				break;
-			case "BURGER", "PIZZA":
+			case "BURGER", "PIZZA", "CAKE":
 				lstItem.add(new Food(itemData, game));
 				break;
 			case "CASH":

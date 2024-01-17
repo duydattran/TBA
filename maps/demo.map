@@ -1,6 +1,7 @@
 [grid]
 encodings: WALL(W) GRASS(G) 
 	FENCE(F) CLIFF(C) ALGAE(A) FLOWER(f) ROAD(r)
+	WATER(w)
 size: (68 x 36)
 data: """
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
@@ -13,9 +14,9 @@ WGF            f           FGWWWWGF                              WWW
 WGF        rrrrrrrr        FGWWWWGF                              WWW
 WGF        rWWWWWWr        rrrrrrrr                        FGWWWWWWW
 WGF        rW     r        WWWWWWWW                        FGWWWWWWW
-WGF        rrrrrrrr        FGWWWWGF                        FGWWWWWWW
-WGF                        FGWWWWGF                        FGWWWWWWW
-WGF                        FGWWWWGF                        FGWWWWWWW
+WGF        rrrrrrrr        FGWWWWGF          wwww          FGWWWWWWW
+WGF                        FGWWWWGF          wwww          FGWWWWWWW
+WGF                        FGWWWWGF          wwww          FGWWWWWWW
 WGF                        FGWWWWGF                        FGWWWWWWW
 WGF                        FGWWWWGF                        FGWWWWWWW
 WGFFFFFFFFFFFFFFFFFFFFFFFFFFGWWWWGF                        FGWWWWWWW
@@ -83,6 +84,12 @@ position: (48,5)
 kind: item
 
 [element]
+name: burger
+skin: CAKE
+position: (48,6)
+kind: item
+
+[element]
 name: cash
 skin: CASH
 position: (48,9)
@@ -128,6 +135,25 @@ damage: 10
 name: Josh
 skin: BABA
 position: (40, 8)
+kind: friend
+health: 10
+zone: (46, 7) (5 x 5)
+behavior: stroll
+trade: CAKE -> KEY red, CASH -> KEY blue, CASH -> CAKE
+
+[element]
+name: JoshUA
+skin: BABA
+position: (41, 8)
+kind: friend
+health: 10
+zone: (46, 7) (5 x 5)
+behavior: stroll
+
+[element]
+name: JoshIE
+skin: BABA
+position: (41, 9)
 kind: friend
 health: 10
 zone: (46, 7) (5 x 5)

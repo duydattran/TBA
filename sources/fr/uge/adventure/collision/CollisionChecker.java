@@ -89,6 +89,31 @@ public class CollisionChecker {
 	
 	public Entity checkEntity(Entity entity) {
 		for (var enemy : game.lstEnemy()) {
+			if (entity == enemy)
+				continue;
+			
+			if (enemy.hitBox() == null) 
+				continue;
+			switch(game.player().direction()) {
+			case UP:
+			case DOWN:
+				if (entity.hitBox().intersectInDistance(enemy.hitBox(), 0, entity.ySpd())) {
+					entity.setYSpd(0);
+					return enemy;
+				}
+			case LEFT:
+			case RIGHT:
+				if (entity.hitBox().intersectInDistance(enemy.hitBox(), entity.xSpd(), 0)) {
+					entity.setXSpd(0);
+					return enemy;
+				}
+			}
+		}
+		
+		for (var enemy : game.lstFriend()) {
+			if (entity == enemy)
+				continue;
+			
 			if (enemy.hitBox() == null) 
 				continue;
 			switch(game.player().direction()) {
@@ -110,26 +135,37 @@ public class CollisionChecker {
 		return null;
 	}
 	
-	public Entity checkFriend(Entity entity) {
+	public Entity checkFriend() {
 		for (var friend : game.lstFriend()) {
 			if (friend.hitBox() == null) 
 				continue;
 			switch(game.player().direction()) {
 			case UP:
+				if (game.player().hitBox().intersectInDistance(friend.hitBox(), 0, -1 * game.player().interactRange())) {
+					game.player().setYSpd(0);
+					return friend;
+				}
+				break;
 			case DOWN:
-				if (entity.hitBox().intersectInDistance(friend.hitBox(), 0, entity.ySpd())) {
-					entity.setYSpd(0);
+				if (game.player().hitBox().intersectInDistance(friend.hitBox(), 0, game.player().interactRange())) {
+					game.player().setYSpd(0);
 					return friend;
 				}
+				break;
 			case LEFT:
-			case RIGHT:
-				if (entity.hitBox().intersectInDistance(friend.hitBox(), entity.xSpd(), 0)) {
-					entity.setXSpd(0);
+				if (game.player().hitBox().intersectInDistance(friend.hitBox(), -1 * game.player().interactRange(), 0)) {
+					game.player().setXSpd(0);
 					return friend;
 				}
+				break;
+			case RIGHT:
+				if (game.player().hitBox().intersectInDistance(friend.hitBox(), game.player().interactRange(), 0)) {
+					game.player().setXSpd(0);
+					return friend;
+				}
+				break;
 			}
 		}
-		
 		return null;
 	}
 	

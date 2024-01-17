@@ -147,7 +147,7 @@ public class Enemy implements Element, Entity{
 		if (game.player().playerState() == PlayerState.normal) {
 			game.player().setHealth(game.player().health() - 1);
 			game.player().setPlayerState(PlayerState.hurt);
-			game.camera().setShakeIntensity(4.5);
+			game.camera().setShakeIntensity(6.9);
 		}
 	}
 	
@@ -159,10 +159,6 @@ public class Enemy implements Element, Entity{
 		else {
 			hurtTimer.update();
 		}
-	}
-	
-	public void knockBack(double distance) {
-		
 	}
 	
 	@Override

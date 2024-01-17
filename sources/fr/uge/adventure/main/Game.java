@@ -39,14 +39,14 @@ public class Game {
 	private final ApplicationContext context;
 
 	private String mapName;
-	private final GameData data;
+	private GameData data;
 
 	private final Player player;
-	private final TileMap tileMap;
-	private final ArrayList<Enemy> lstEnemy;
-	private final ArrayList<Friend> lstFriend;
-	private final ArrayList<Item> lstItem;
-	private final ArrayList<GameObject> lstObject;
+	private TileMap tileMap;
+	private ArrayList<Enemy> lstEnemy;
+	private ArrayList<Friend> lstFriend;
+	private ArrayList<Item> lstItem;
+	private ArrayList<GameObject> lstObject;
 
 	private final TileManager tileMng;
 	private final EnemyManager enemyMng;
@@ -98,6 +98,16 @@ public class Game {
 
 		this.cam = new Camera(player, scrWidth, scrHeight, this);
 		this.renderer = new GameRenderer(this);
+	}
+	
+	public void reload(String mapName) throws IOException {
+		this.mapName = mapName;
+		this.data = loadGameData();
+		this.tileMap = new TileMap(data.map());
+		this.lstEnemy = new ArrayList<Enemy>();
+		this.lstFriend = new ArrayList<Friend>();
+		this.lstItem = new ArrayList<Item>();
+		this.lstObject = new ArrayList<GameObject>();
 	}
 
 	public void update() {

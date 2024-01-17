@@ -28,7 +28,7 @@ public class EnemyRenderer {
 	}
 	
 	public void update() {
-		animateEnemy();
+		
 	}
 	
 	public void render(Graphics2D g2) {
@@ -38,6 +38,7 @@ public class EnemyRenderer {
 			if (!gameRenderer.cam().isEntityInRange(currentEnemy)) {
 				continue;
 			}
+			animateEnemy();
 			int currentIndexAnim = animIndexes[i];
 			var texture = gameRenderer.texture().lstEnemyTextureScaled().get(currentEnemy.skin());
 			BufferedImage currentTexture = texture.get(currentEnemy.direction()).get(currentIndexAnim);

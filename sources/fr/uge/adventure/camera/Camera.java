@@ -9,6 +9,7 @@ import java.util.Random;
 import fr.uge.adventure.entity.Entity;
 import fr.uge.adventure.item.Item;
 import fr.uge.adventure.main.Game;
+import fr.uge.adventure.object.GameObject;
 import fr.uge.adventure.renderer.Timer;
 
 public class Camera {
@@ -22,7 +23,7 @@ public class Camera {
 	
 	private final Timer shakeTimer;
 	private double shakeIntensity = 0;
-	private static long shakeTime = 300;
+	private static long shakeTime = 400;
 	
 	public Camera(Entity target, double camWidth, double camHeight, Game game) {
 		Objects.requireNonNull(target);
@@ -51,7 +52,7 @@ public class Camera {
 		camRangeCheck();
 		camPosUpdate();
 		
-		if (shakeIntensity != 0 && shakeTimer.tick() < shakeTime * 10000000) {
+		if (shakeIntensity != 0 && shakeTimer.tick() < shakeTime * 1000000) {
 			applyShake(shakeIntensity);
 			shakeTimer.update();
 		}
@@ -120,6 +121,14 @@ public class Camera {
 		if (camX < item.wrldX() && item.wrldX() < camX + camWidth &&
 			camY < item.wrldY() && item.wrldY() < camY + camHeight) {
 			return true;
+		}
+		return false;
+	}
+	
+	public boolean isObjectInRange(GameObject obj) {
+		if (camX < obj.wrldX() && obj.wrldX() < camX + camWidth &&
+				camY < obj.wrldY() && obj.wrldY() < camY + camHeight) {
+				return true;
 		}
 		return false;
 	}

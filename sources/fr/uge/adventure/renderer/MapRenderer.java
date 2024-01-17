@@ -19,6 +19,13 @@ public class MapRenderer {
 	private final TileMap tileMap;
 	private final GameRenderer gameRenderer;
 	
+	private final Timer animTimer;
+	private long animationTime = 1000000000; 
+	private int animIndex = 0;
+	
+	private int[][] animOgIndex;
+	
+	
 	public MapRenderer(TileMap tileMap, GameRenderer gameRenderer) throws IOException {
 		Objects.requireNonNull(tileMap);
 		Objects.requireNonNull(gameRenderer);
@@ -27,8 +34,14 @@ public class MapRenderer {
 		this.gameRenderer = gameRenderer;
 		this.tileMap = tileMap;
 		this.mapTexture = new BufferedImage[tileMap.row()][tileMap.col()];
+		this.animTimer = new Timer();
+		this.animOgIndex = new int[tileMap.row()][tileMap.col()];
 		loadTileTexture(tileMap, gameRenderer.ogSprSize());
 		loadMapTexture();
+	}
+	
+	public void update() {
+		animateTile();
 	}
 	
 	public void render(Graphics2D g2) {
@@ -41,9 +54,23 @@ public class MapRenderer {
 				x = (int) ((col * gameRenderer.tileSize()) - cam.camX());
 				y = (int) ((row * gameRenderer.tileSize()) - cam.camY());
 				if (tileMap.tiles()[row][col] != null) {
-					g2.drawImage(mapTexture[row][col], null, x, y);
+//					g2.drawImage(mapTexture[row][col], null, x, y);
+//					animOgIndex[row][col] + animIndex * 16
+					g2.drawImage(tileTexture.get(
+								tileMap.tiles()[row][col].tileType).get(animOgIndex[row][col] + animIndex * 16), null, x, y);
 				}
 			}
+		}
+	}
+	
+	private void animateTile() {
+		animTimer.update();
+		
+		if (animTimer.tick() >= animationTime) {
+			animTimer.reset();
+			animIndex++;
+			if (animIndex >= 3)
+				animIndex = 0;
 		}
 	}
 	
@@ -112,7 +139,8 @@ public class MapRenderer {
 				}
 				
 				int index = getIndexSpriteFrame(sum);
-				mapTexture[row][col] = tileTexture.get(type).get(index);
+//				mapTexture[row][col] = tileTexture.get(type).get(index);
+				animOgIndex[row][col] = index;
 			}
 		}
 	}

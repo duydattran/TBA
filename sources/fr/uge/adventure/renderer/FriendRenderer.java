@@ -29,7 +29,6 @@ public class FriendRenderer {
 	}
 	
 	public void update() {
-		animateEnemy();
 	}
 	
 	public void render(Graphics2D g2) {
@@ -39,6 +38,7 @@ public class FriendRenderer {
 			if (!gameRenderer.cam().isEntityInRange(currentFriend)) {
 				continue;
 			}
+			animateFriend();
 			int currentIndexAnim = animIndexes[i];
 			var texture = gameRenderer.texture().lstEnemyTextureScaled().get(currentFriend.skin());
 			BufferedImage currentTexture = texture.get(currentFriend.direction()).get(currentIndexAnim);
@@ -53,7 +53,7 @@ public class FriendRenderer {
 		}
 	}
 	
-	private void animateEnemy() {
+	private void animateFriend() {
 		for (int i = 0; i < lstFriend.size(); i++) {
 			Friend currentFriend = lstFriend.get(i);
 			Timer currentTimer = lstAnimTimers.get(i);

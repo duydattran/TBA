@@ -3,7 +3,7 @@ package fr.uge.adventure.tile;
 public enum TileType {	
     // decoration
     ALGAE(false), CLOUD(false), FLOWER(false), FOLIAGE(false), GRASS(false), LADDER(false), LILY(false),
-    PLANK(false), REED(false), ROAD(false), SPROUT(false), TILE(false), TRACK(false), VINE(false),
+    PLANK(false), REED(false), ROAD(false), SPROUT(false), TILE(false), TRACK(false), VINE(false), WATER(false),
     // obstacle
     BED(true), BOG(true), BOMB(true), BRICK(true), CHAIR(false), CLIFF(true), DOOR(true), FENCE(true),
     FORT(true), GATE(true), HEDGE(true), HOUSE(true), HUSK(true), HUSKS(true), LOCK(true), MONITOR(false),

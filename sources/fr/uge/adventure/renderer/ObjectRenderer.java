@@ -27,7 +27,7 @@ public class ObjectRenderer {
 	}
 	
 	public void update() {
-		animateItem();
+		
 	}
 	
 	public void render(Graphics2D g2) {
@@ -35,9 +35,10 @@ public class ObjectRenderer {
 		
 		for (int i = 0; i < lstObject.size(); i++) {
 			GameObject currentItem = lstObject.get(i);
-//			if (!gameRenderer.cam().isItemInRange(currentItem)) {
-//				continue;
-//			}
+			if (!gameRenderer.cam().isObjectInRange(currentItem)) {
+				continue;
+			}
+			animateItem();
 			int currentIndexAnim = animIndexes[i];
 			var texture = gameRenderer.texture().lstItemTextureScaled().get(currentItem.skin());
 			BufferedImage currentTexture = texture.get(currentIndexAnim);

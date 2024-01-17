@@ -33,6 +33,8 @@ public class ObjectManager {
 			case "FIRE":
 				lstObject.add(new Fire(itemData, game));
 				break;
+			case "WATER":
+				lstObject.add(new Water(itemData, game));
 			default:
 				break;
 			}

@@ -79,13 +79,12 @@ public class UIManager {
 			else if (game.input().spaceTouch) {
 				game.input().spaceTouch = false;
 				if (item1 == null) {
-					int index = yCursorInv * gridRow + xCursorInv;
+					int index = yCursorInv * gridCol + xCursorInv;
 					if (index < game.player().trader().inventory().size())	
 						item1 = game.player().trader().inventory().get(index);
 				}
 				else if (item2 == null) {
-					int index = yCursorInv * gridRow + xCursorInv;
-					System.out.println(index);
+					int index = yCursorInv * gridCol + xCursorInv;
 					if (index < game.player().inventory().size())	
 						item2 = game.player().inventory().get(index);
 				}

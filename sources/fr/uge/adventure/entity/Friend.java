@@ -65,7 +65,7 @@ public class Friend implements Element, Entity{
 	}
 	
 	public void update() {		
-//		move();
+		move();
 		
 		hitBox.update(wrldX, wrldY);
 		
@@ -82,13 +82,15 @@ public class Friend implements Element, Entity{
 	}
 	
 	private void loadInventory() {
+		if (lstTrade == null)
+			return;
 		for (var lstItem : lstTrade.values()) {
 			for (var item : lstItem) {
 				switch (item.skin()) {
 				case "KEY":
 					inventory.add(new Key(item.name(), item.skin()));
 					break;
-				case "PIZZA":
+				case "PIZZA", "CAKE":
 					inventory.add(new Food(item.name(), item.skin()));
 					break;
 				}
@@ -146,26 +148,38 @@ public class Friend implements Element, Entity{
 		
 		var lstItem = lstTrade.getOrDefault(item2.skin(), null);
 		System.out.println(item2.skin());
+		
 		if (lstItem != null) {
 			for (var item : lstItem) {
+				System.out.println(item.skin());
 				if (item.skin().equals(item1.skin())) {
 					game.player().inventory().add(item1);
 					game.player().inventory().remove(item2);
-					inventory.remove(item1);
+					
 					inventory.add(item2);
+					inventory.remove(item1);
 					game.uiMng().setName(name);
 					game.uiMng().setContentTextBox("Thank you!");
-					game.setGameState(GameState.dialogueScr);	
+					game.setGameState(GameState.dialogueScr);
+					return;
 				}
 			}
 		}else {
 			game.uiMng().setName(name);
 			game.uiMng().setContentTextBox("I don't want this!");
 			game.setGameState(GameState.dialogueScr);	
+			return;
 		}
 	}
 	
 	public void event() {
+		if(inventory().size() == 0) {
+			game.uiMng().setName(name);
+			game.uiMng().setContentTextBox("Hello There, Welcome to our village!");
+			game.setGameState(GameState.dialogueScr);
+			return;
+		}
+		
 		if (game.player().inventory().size() == 0) {
 			game.uiMng().setName(name);
 			game.uiMng().setContentTextBox("You dont have anything to trade. Go around find treasure and come back");

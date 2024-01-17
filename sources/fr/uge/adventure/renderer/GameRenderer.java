@@ -54,6 +54,7 @@ public class GameRenderer {
 	}
 	
 	public void update() {
+		mapRenderer.update();
 		pRenderer.update();
 		eRenderer.update();
 		iRenderer.update();

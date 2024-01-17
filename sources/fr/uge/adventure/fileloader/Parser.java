@@ -406,6 +406,7 @@ public class Parser {
 			case "kind":
 			case "color":
 			case "locked":
+			case "flow":
 				stringData.put(pointerToken.content(), parseAttributeString(pointerToken.content(), tokens));
 				break;
 			
@@ -497,33 +498,32 @@ public class Parser {
 			return null;
 		}
 		
-		while (peek(tokens) != null && !peek(tokens).isToken(Token.LEFT_BRACKET)) {
+		while (peek(tokens) != null && !peek(tokens).isToken(Token.NEWLINE)) {
+			
 			firstItem = ""; 
 			secondItem = "";
 			secondItemName = "";
 			ArrayList<Map<String, String>> map = new ArrayList<Map<String, String>>();
+			
 			if (peek(tokens).token() != Token.IDENTIFIER) {
 				syntaxErrorHandler(Token.IDENTIFIER);
 				skipTo(tokens, Token.NEWLINE);
 				return null;
 			}
+			
 			pointerToken = next(tokens);
 			firstItem = pointerToken.content();
-			System.out.println(firstItem);
-			
 
 			if (peek(tokens).token() != Token.IDENTIFIER) {
 				syntaxErrorHandler(Token.IDENTIFIER);
 				skipTo(tokens, Token.NEWLINE);
 				return null;
 			}
+			
 			pointerToken = next(tokens);
 			secondItem = pointerToken.content();
-			System.out.println(secondItem);
 			
-			System.out.println(peek(tokens));
-			
-			if (peek(tokens) == null) {
+			if (peek(tokens) == null || peek(tokens).isToken(Token.NEWLINE) || peek(tokens).isToken(Token.COMMA)) {
 				if (!lstTrade.containsKey(firstItem)) {
 					var lstItemData = new ArrayList<ItemData>();
 					lstItemData.add(new ItemData(secondItemName, secondItem));
@@ -532,28 +532,38 @@ public class Parser {
 				else {
 					lstTrade.get(firstItem).add(new ItemData(secondItemName, secondItem));
 				}
-				break;
 			}
 			
-			
-			if (peek(tokens).token() != Token.IDENTIFIER && peek(tokens).token() != Token.COMMA && peek(tokens).token() != Token.NEWLINE) {
-				syntaxErrorHandler(Token.IDENTIFIER);
-				skipTo(tokens, Token.NEWLINE);
-				return null;
-			}
-			
-			pointerToken = next(tokens);
-			secondItemName = pointerToken.content();
-			if (!lstTrade.containsKey(firstItem)) {
-				var lstItemData = new ArrayList<ItemData>();
-				lstItemData.add(new ItemData(secondItemName, secondItem));
-				lstTrade.put(firstItem, lstItemData);
-			}
 			else {
-				lstTrade.get(firstItem).add(new ItemData(secondItemName, secondItem));
+				
+				if (peek(tokens).token() != Token.IDENTIFIER) {
+					syntaxErrorHandler(Token.IDENTIFIER);
+					skipTo(tokens, Token.NEWLINE);
+					return null;
+				}
+				pointerToken = next(tokens);
+				secondItemName = pointerToken.content();
+				
+				if (!lstTrade.containsKey(firstItem)) {
+					var lstItemData = new ArrayList<ItemData>();
+					lstItemData.add(new ItemData(secondItemName, secondItem));
+					lstTrade.put(firstItem, lstItemData);
+				}
+				else {
+					lstTrade.get(firstItem).add(new ItemData(secondItemName, secondItem));
+				}
+				
+				if (peek(tokens) == null || peek(tokens).isToken(Token.NEWLINE)) {
+					next(tokens);
+					break;
+				}
+				
+				if (!skip(tokens, Token.COMMA)) {
+					syntaxErrorHandler(Token.COMMA);
+					skipTo(tokens, Token.NEWLINE);
+					return null;
+				}
 			}
-			
-			skip(tokens, Token.COMMA);
 		}
 		
 		return lstTrade;
